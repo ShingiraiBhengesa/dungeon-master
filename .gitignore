@@ -1,0 +1,12 @@
+# Ignore environment variables file if any
+.env
+
+# VSCode settings
+.vscode/
+
+# Project specific ignores
+audio/
+generated_assets/
+
+# Ignore Python cache files
+__pycache__/

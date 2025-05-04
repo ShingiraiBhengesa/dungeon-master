@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" class="dark"> <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI DungeonMaster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .fade-in { animation: fadeIn 0.8s ease-in-out; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .animate-pulse-custom { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        html, body { height: 100%; margin: 0; font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        audio {
+            width: 100%;
+            margin-top: 1rem;
+            filter: invert(90%) sepia(15%) saturate(200%) hue-rotate(180deg) brightness(100%) contrast(90%);
+        }
+        #loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(17, 24, 39, 0.8); z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+         }
+         /* Ensure choices container can scroll if needed */
+         #choices-container { max-height: 30vh; overflow-y: auto; }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200 flex flex-col h-full overflow-hidden">
+
+    <header class="bg-gray-800 dark:bg-gray-950 text-white p-4 shadow-md flex-shrink-0">
+        <h1 class="text-2xl font-bold text-center">AI DungeonMaster</h1>
+    </header>
+
+    <main class="flex-grow container mx-auto p-4 md:p-6 lg:p-8 flex flex-col lg:flex-row gap-6 overflow-hidden">
+
+        <div class="lg:w-1/2 flex flex-col space-y-4 overflow-hidden">
+            <div id="story-output" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex-grow overflow-y-auto border border-gray-300 dark:border-gray-700 min-h-[200px]">
+                <p class="italic text-gray-600 dark:text-gray-400">Your adventure begins here...</p>
+            </div>
+
+            <div id="audio-player-container" class="hidden flex-shrink-0">
+                <audio controls id="audio-player">Your browser does not support the audio element.</audio>
+            </div>
+
+            <div id="choices-container" class="space-y-2 flex-shrink-0">
+                </div>
+
+            <div id="initial-prompt-area" class="space-y-2 pt-4 flex-shrink-0">
+                <label for="initial-prompt" class="block font-semibold">Start your adventure:</label>
+                <textarea id="initial-prompt" rows="3" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="e.g., You stand before a towering, moss-covered gate..."></textarea>
+                <button id="start-button" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md transition duration-150 ease-in-out">
+                    Begin Adventure
+                </button>
+            </div>
+        </div>
+
+        <div class="lg:w-1/2 flex items-center justify-center bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-md border border-gray-300 dark:border-gray-700 overflow-hidden min-h-[300px]">
+             <div id="image-container" class="w-full h-full flex items-center justify-center">
+                 <div id="image-placeholder" class="text-center text-gray-500 dark:text-gray-400">
+                    <i class="fas fa-image fa-3x mb-2"></i>
+                    <p>Scene visuals will appear here.</p>
+                </div>
+                <img id="scene-image" src="" alt="Scene Visual" class="hidden max-w-full max-h-full object-contain rounded-md">
+            </div>
+        </div>
+    </main>
+
+    <div id="loading-overlay" class="hidden">
+         <div class="text-center text-white">
+            <i class="fas fa-spinner fa-spin fa-3x mb-3"></i>
+            <p class="text-xl font-semibold animate-pulse-custom">Generating your fate...</p>
+        </div>
+    </div>
+
+    <input type="hidden" id="session-id" value="{{ session_id }}">
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

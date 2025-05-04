@@ -1,0 +1,5 @@
+openai>=1.0.0
+python-dotenv>=1.0.0
+Flask>=3.0.0
+requests>=2.0.0 # Explicitly needed for image download in older versions, good practice to keep if handler changes
+uuid # Although part of standard library, listing can be helpful for clarity if needed elsewhere
