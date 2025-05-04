@@ -75,10 +75,18 @@ function updateStoryOutput(text) {
     const storyOutput = document.getElementById('story-output');
     if (!storyOutput) return;
     storyOutput.innerHTML = '';
-    const paragraph = document.createElement('p');
-    paragraph.innerHTML = text.split('\n').map(line => line.trim()).filter(line => line).join('<br>');
-    paragraph.classList.add('fade-in');
-    storyOutput.appendChild(paragraph);
+    
+    // Use typewriter effect if available, otherwise fallback to standard display
+    if (window.dungeonEffects && window.dungeonEffects.typeStory) {
+        const formattedText = text.split('\n').map(line => line.trim()).filter(line => line).join('<br>');
+        window.dungeonEffects.typeStory(formattedText);
+    } else {
+        const paragraph = document.createElement('p');
+        paragraph.innerHTML = text.split('\n').map(line => line.trim()).filter(line => line).join('<br>');
+        paragraph.classList.add('fade-in');
+        storyOutput.appendChild(paragraph);
+    }
+    
     storyOutput.scrollTop = 0;
 }
 
@@ -169,14 +177,38 @@ function updateChoices(choices) {
         const button = document.createElement('button');
         button.textContent = choice.replace(/^\d+\.\s*/, '');
         button.dataset.choiceText = choice;
+        
+        // Apply fantasy styling to choice buttons
         button.classList.add(
-            'w-full', 'text-left', 'bg-gray-200', 'dark:bg-gray-700', 'hover:bg-gray-300',
-            'dark:hover:bg-gray-600', 'text-gray-800', 'dark:text-gray-100',
-            'font-semibold', 'py-3', 'px-4', 'rounded-lg', 'transition',
-            'duration-150', 'ease-in-out', 'fade-in', 'shadow-sm', 'hover:shadow-md'
+            'w-full', 'text-left', 'fantasy-panel', 'fantasy-border', 'text-gray-800', 
+            'dark:text-gray-100', 'font-semibold', 'py-3', 'px-4', 'rounded-lg', 
+            'transition', 'duration-150', 'ease-in-out', 'fade-in', 'shadow-sm', 
+            'hover:shadow-md', 'magic-glow', 'magical-runes'
         );
-        button.style.animationDelay = `${index * 0.08}s`;
-        button.addEventListener('click', () => handleChoiceClick(choice));
+        
+        // Add staggered animation delay
+        button.style.animationDelay = `${index * 0.12}s`;
+        
+        // Add click event with visual feedback
+        button.addEventListener('click', (e) => {
+            // Add selection animation class
+            e.currentTarget.classList.add('choice-selected');
+            
+            // Wait for animation to complete before proceeding
+            setTimeout(() => {
+                handleChoiceClick(choice);
+            }, 300);
+        });
+        
+        // Add hover effect
+        button.addEventListener('mouseenter', () => {
+            button.classList.add('torch-light');
+        });
+        
+        button.addEventListener('mouseleave', () => {
+            button.classList.remove('torch-light');
+        });
+        
         choicesContainer.appendChild(button);
     });
 }
@@ -275,6 +307,11 @@ async function handleStartClick() {
         return;
     }
 
+    // Play sound effect if available
+    if (window.dungeonEffects && window.dungeonEffects.sounds) {
+        window.dungeonEffects.sounds.play('success', { volume: 0.4 });
+    }
+
     if (initialPromptArea) initialPromptArea.classList.add('hidden');
     updateStoryOutput("Generating the start of your adventure...");
     updateChoices([]);
@@ -311,6 +348,11 @@ async function handleStartClick() {
  */
 async function handleChoiceClick(choiceText) {
     if (isLoading) return;
+
+    // Play sound effect if available
+    if (window.dungeonEffects && window.dungeonEffects.sounds) {
+        window.dungeonEffects.sounds.play('click', { volume: 0.4 });
+    }
 
     console.log("Choice made:", choiceText);
     updateStoryOutput("Processing your choice...");
@@ -408,6 +450,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Call enableInteraction last to ensure overlay is hidden after setup
         enableInteraction();
 
+        // Initialize ambient background music if available (commented out until sound files are added)
+        // if (window.dungeonEffects && window.dungeonEffects.sounds) {
+        //     window.dungeonEffects.sounds.play('ambient', { volume: 0.2, loop: true });
+        // }
+
         console.log("AI DungeonMaster frontend initialization complete.");
 
     } catch (error) {
@@ -420,4 +467,3 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log("Script file loaded.");
-

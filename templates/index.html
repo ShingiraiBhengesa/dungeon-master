@@ -5,67 +5,141 @@
     <title>AI DungeonMaster</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/fantasy.css">
     <style>
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .fade-in { animation: fadeIn 0.8s ease-in-out; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         .animate-pulse-custom { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        html, body { height: 100%; margin: 0; font-family: 'Inter', sans-serif; }
+        
+        /* Enhanced styling */
+        html, body { height: 100%; margin: 0; font-family: 'MedievalSharp', 'Inter', sans-serif; }
+        
+        /* Scrollbar styling */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #1f2937; }
-        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { 
+            background: #4b5563; 
+            border-radius: 4px; 
+            background-image: linear-gradient(180deg, #4b5563 0%, #6b7280 50%, #4b5563 100%);
+        }
         ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        
+        /* Audio player styling */
         audio {
             width: 100%;
             margin-top: 1rem;
             filter: invert(90%) sepia(15%) saturate(200%) hue-rotate(180deg) brightness(100%) contrast(90%);
         }
+        
+        /* Loading overlay */
         #loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(17, 24, 39, 0.8); z-index: 9999;
             display: flex; justify-content: center; align-items: center;
             backdrop-filter: blur(5px);
-         }
-         /* Ensure choices container can scroll if needed */
-         #choices-container { max-height: 30vh; overflow-y: auto; }
+        }
+        
+        /* Ensure choices container can scroll if needed */
+        #choices-container { max-height: 30vh; overflow-y: auto; }
+        
+        /* Fantasy-themed UI elements */
+        .fantasy-border {
+            border: 2px solid transparent;
+            border-image: linear-gradient(to right, #8a5fff, #c49fff, #8a5fff);
+            border-image-slice: 1;
+            box-shadow: 0 0 15px rgba(138, 95, 255, 0.3);
+        }
+        
+        .fantasy-header {
+            background-image: linear-gradient(to right, #1a1a2e, #16213e, #0f3460, #541b54);
+            border-bottom: 2px solid #8a5fff;
+        }
+        
+        .fantasy-button {
+            background-image: linear-gradient(to right, #4c2882, #6a359c, #4c2882);
+            transition: all 0.3s ease;
+            border: 1px solid #8a5fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .fantasy-button:hover {
+            background-image: linear-gradient(to right, #6a359c, #8a5fff, #6a359c);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .fantasy-panel {
+            background-color: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(5px);
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Glowing effect for important elements */
+        .glow-effect {
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 5px rgba(138, 95, 255, 0.2); }
+            to { box-shadow: 0 0 20px rgba(138, 95, 255, 0.6); }
+        }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=MedievalSharp&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200 flex flex-col h-full overflow-hidden">
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200 flex flex-col h-full overflow-hidden bg-pattern">
+    <!-- Fog effect container -->
+    <div class="fog-container">
+        <div class="fog fog-1"></div>
+        <div class="fog fog-2"></div>
+        <div class="fog fog-3"></div>
+    </div>
 
-    <header class="bg-gray-800 dark:bg-gray-950 text-white p-4 shadow-md flex-shrink-0">
-        <h1 class="text-2xl font-bold text-center">AI DungeonMaster</h1>
+    <header class="fantasy-header text-white p-4 shadow-md flex-shrink-0">
+        <h1 class="text-3xl font-bold text-center font-medieval glow-effect sparkle">
+            <i class="fas fa-dragon mr-2 floating"></i>AI DungeonMaster<i class="fas fa-hat-wizard ml-2 floating"></i>
+        </h1>
     </header>
 
     <main class="flex-grow container mx-auto p-4 md:p-6 lg:p-8 flex flex-col lg:flex-row gap-6 overflow-hidden">
 
         <div class="lg:w-1/2 flex flex-col space-y-4 overflow-hidden">
-            <div id="story-output" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex-grow overflow-y-auto border border-gray-300 dark:border-gray-700 min-h-[200px]">
-                <p class="italic text-gray-600 dark:text-gray-400">Your adventure begins here...</p>
+            <div id="story-output" class="fantasy-panel fantasy-border p-5 rounded-lg shadow-md flex-grow overflow-y-auto min-h-[200px] parchment-bg scroll-border ornamental-corners torch-light">
+                <span></span> <!-- Required empty span for ornamental corners -->
+                <p class="italic text-gray-400">Your adventure begins here...</p>
             </div>
 
-            <div id="audio-player-container" class="hidden flex-shrink-0">
+            <div id="audio-player-container" class="hidden flex-shrink-0 fantasy-border p-2 rounded-lg">
                 <audio controls id="audio-player">Your browser does not support the audio element.</audio>
             </div>
 
-            <div id="choices-container" class="space-y-2 flex-shrink-0">
-                </div>
+            <div id="choices-container" class="space-y-3 flex-shrink-0">
+                <!-- Choices will be inserted here by JavaScript -->
+            </div>
 
-            <div id="initial-prompt-area" class="space-y-2 pt-4 flex-shrink-0">
-                <label for="initial-prompt" class="block font-semibold">Start your adventure:</label>
-                <textarea id="initial-prompt" rows="3" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="e.g., You stand before a towering, moss-covered gate..."></textarea>
-                <button id="start-button" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md transition duration-150 ease-in-out">
-                    Begin Adventure
+            <div id="initial-prompt-area" class="space-y-3 pt-4 flex-shrink-0">
+                <label for="initial-prompt" class="block font-semibold text-lg">
+                    <i class="fas fa-scroll mr-2 floating"></i>Start your adventure:
+                </label>
+                <textarea id="initial-prompt" rows="3" class="w-full p-3 border rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-purple-500 focus:outline-none fantasy-border magical-runes" placeholder="e.g., You stand before a towering, moss-covered gate..."></textarea>
+            </div>
+            
+            <!-- Separated button to ensure visibility -->
+            <div class="mt-6 mb-10 sticky bottom-4">
+                <button id="start-button" class="w-full fantasy-button text-white font-bold py-4 px-6 rounded-md magic-glow text-xl fixed-visible">
+                    <i class="fas fa-dice-d20 mr-2"></i>Begin Adventure
                 </button>
             </div>
         </div>
 
-        <div class="lg:w-1/2 flex items-center justify-center bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-md border border-gray-300 dark:border-gray-700 overflow-hidden min-h-[300px]">
-             <div id="image-container" class="w-full h-full flex items-center justify-center">
-                 <div id="image-placeholder" class="text-center text-gray-500 dark:text-gray-400">
-                    <i class="fas fa-image fa-3x mb-2"></i>
+        <div class="lg:w-1/2 flex items-center justify-center fantasy-panel p-4 rounded-lg shadow-md fantasy-border overflow-hidden min-h-[300px] ornamental-corners">
+            <span></span> <!-- Required empty span for ornamental corners -->
+            <div id="image-container" class="w-full h-full flex items-center justify-center">
+                <div id="image-placeholder" class="text-center text-gray-500 dark:text-gray-400">
+                    <i class="fas fa-image fa-3x mb-2 floating"></i>
                     <p>Scene visuals will appear here.</p>
                 </div>
                 <img id="scene-image" src="" alt="Scene Visual" class="hidden max-w-full max-h-full object-contain rounded-md">
@@ -75,13 +149,19 @@
 
     <div id="loading-overlay" class="hidden">
          <div class="text-center text-white">
-            <i class="fas fa-spinner fa-spin fa-3x mb-3"></i>
-            <p class="text-xl font-semibold animate-pulse-custom">Generating your fate...</p>
+            <div class="magic-spinner mb-4">
+                <div></div><div></div><div></div>
+                <div></div><div></div><div></div>
+                <div></div><div></div><div></div>
+            </div>
+            <p class="text-xl font-semibold animate-pulse-custom">Weaving your tale with magic...</p>
         </div>
     </div>
 
     <input type="hidden" id="session-id" value="{{ session_id }}">
 
+    <!-- Load scripts -->
+    <script src="/static/js/effects.js"></script>
     <script src="/static/js/script.js"></script>
 </body>
 </html>
