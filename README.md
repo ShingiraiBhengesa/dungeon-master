@@ -72,3 +72,9 @@ See `requirements.txt`. Key dependencies include:
 * `Flask`: Web framework for the backend.
 * `requests`: For potential HTTP requests (like downloading images if needed, though handled via URL now).
 
+## Collaborators
+ 
+  - Wendy Onwuagana
+  - Obsa Sendaba
+  - Shingirai Bhengesa
+
