@@ -13,9 +13,6 @@ AI DungeonMaster is an immersive, web-based choose-your-own-adventure game where
 * **Interactive Choices:** Clickable buttons for story progression.
 * **Loading Animations:** Visual feedback while waiting for AI generation.
 
-## Project Structure
-
-ai-dungeonmaster-web/│├── app.py                # Flask backend application├── openai_handler.py     # Handles OpenAI API calls├── story_manager.py      # Manages game state├── requirements.txt      # Python dependencies├── .env                  # Stores API keys (DO NOT COMMIT TO GIT)├── static/               # Folder for CSS, JS, static assets│   ├── js/│   │   └── script.js     # Frontend JavaScript logic│   └── assets/           # (Optional: e.g., loading spinner SVG)├── templates/            # Folder for HTML templates│   └── index.html        # Main HTML file for the game interface├── generated_assets/     # Temporary storage for generated files│   └── audio/            # Stores generated MP3 narration files└── README.md             # This file
 ## Setup Instructions
 
 1.  **Clone the Repository (or create the files):**
