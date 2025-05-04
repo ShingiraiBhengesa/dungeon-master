@@ -1,4 +1,4 @@
-# AI DungeonMaster - Choose Your Own AI Adventure (Web Version)
+# AI DungeonMaster - Choose Your Own AI Adventure 
 
 ## Concept
 
