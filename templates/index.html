@@ -90,7 +90,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=MedievalSharp&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200 flex flex-col h-full overflow-hidden bg-pattern">
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200 flex flex-col h-full overflow-auto bg-pattern">
     <!-- Fog effect container -->
     <div class="fog-container">
         <div class="fog fog-1"></div>
@@ -104,9 +104,9 @@
         </h1>
     </header>
 
-    <main class="flex-grow container mx-auto p-4 md:p-6 lg:p-8 flex flex-col lg:flex-row gap-6 overflow-hidden">
+    <main class="flex-grow container mx-auto p-4 md:p-6 lg:p-8 flex flex-col lg:flex-row gap-6 overflow-auto">
 
-        <div class="lg:w-1/2 flex flex-col space-y-4 overflow-hidden">
+        <div class="lg:w-1/2 flex flex-col space-y-4">
             <div id="story-output" class="fantasy-panel fantasy-border p-5 rounded-lg shadow-md flex-grow overflow-y-auto min-h-[200px] parchment-bg scroll-border ornamental-corners torch-light">
                 <span></span> <!-- Required empty span for ornamental corners -->
                 <p class="italic text-gray-400">Your adventure begins here...</p>
@@ -128,14 +128,14 @@
             </div>
             
             <!-- Separated button to ensure visibility -->
-            <div class="mt-6 mb-10 sticky bottom-4">
+            <div class="mt-6 mb-10">
                 <button id="start-button" class="w-full fantasy-button text-white font-bold py-4 px-6 rounded-md magic-glow text-xl fixed-visible">
                     <i class="fas fa-dice-d20 mr-2"></i>Begin Adventure
                 </button>
             </div>
         </div>
 
-        <div class="lg:w-1/2 flex items-center justify-center fantasy-panel p-4 rounded-lg shadow-md fantasy-border overflow-hidden min-h-[300px] ornamental-corners">
+        <div class="lg:w-1/2 flex items-center justify-center fantasy-panel p-4 rounded-lg shadow-md fantasy-border min-h-[300px] ornamental-corners">
             <span></span> <!-- Required empty span for ornamental corners -->
             <div id="image-container" class="w-full h-full flex items-center justify-center">
                 <div id="image-placeholder" class="text-center text-gray-500 dark:text-gray-400">

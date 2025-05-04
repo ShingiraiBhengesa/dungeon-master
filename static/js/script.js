@@ -173,6 +173,12 @@ function updateChoices(choices) {
         return;
     }
 
+    // Add a heading for the adventure options
+    const optionsHeading = document.createElement('h2');
+    optionsHeading.textContent = "Choose Your Next Step";
+    optionsHeading.classList.add('text-2xl', 'font-medieval', 'text-center', 'mb-4', 'mt-2', 'text-purple-300', 'glow-effect', 'fade-in', 'font-bold');
+    choicesContainer.appendChild(optionsHeading);
+
     choices.forEach((choice, index) => {
         const button = document.createElement('button');
         button.textContent = choice.replace(/^\d+\.\s*/, '');
@@ -183,7 +189,7 @@ function updateChoices(choices) {
             'w-full', 'text-left', 'fantasy-panel', 'fantasy-border', 'text-gray-800', 
             'dark:text-gray-100', 'font-semibold', 'py-3', 'px-4', 'rounded-lg', 
             'transition', 'duration-150', 'ease-in-out', 'fade-in', 'shadow-sm', 
-            'hover:shadow-md', 'magic-glow', 'magical-runes'
+            'hover:shadow-md', 'magic-glow', 'magical-runes', 'mb-4'
         );
         
         // Add staggered animation delay

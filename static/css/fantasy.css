@@ -413,6 +413,7 @@
     background-image: linear-gradient(to right, #4c2882, #6a359c, #8a5fff, #6a359c, #4c2882);
     background-size: 200% auto;
     animation: pulse-attention 2s infinite, gradient-shift 3s ease infinite;
+    margin-bottom: 20px; /* Add margin to ensure it doesn't overlap with other elements */
 }
 
 @keyframes pulse-attention {
