@@ -79,10 +79,9 @@
 }
 
 /* General fantasy button (used for Start Adventure) - sheen effect */
-.fantasy-button { /* This class is applied to #start-button */
+.fantasy-button {
     position: relative;
     overflow: hidden;
-    /* Base visual styles (colors, padding, etc.) for #start-button are in index.html <style> */
 }
 
 .fantasy-button::before { /* Sheen effect */
@@ -159,13 +158,13 @@
 
 /* === Start: Choice Button Enhancements === */
 #choices-container {
-    max-height: 35vh; /* Consistent with index.html */
+    max-height: 35vh;
     overflow-y: auto;
     padding-top: 0.5rem;
 }
 
 .choice-button {
-    background-image: linear-gradient(to right, #3a2d5c, #4f3a7d, #3a2d5c); /* Original purple base */
+    background-image: linear-gradient(to right, #3a2d5c, #4f3a7d, #3a2d5c);
     color: #d1c4e9;
     border: 1px solid #7e57c2;
     border-radius: 6px;
@@ -179,8 +178,8 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
-    margin-bottom: 0.75rem; /* Handles spacing, ensure no space-y on parent in HTML */
-    opacity: 0; /* Start hidden for fade-in */
+    margin-bottom: 0.75rem;
+    opacity: 0;
     animation: fadeInChoice 0.5s ease-out forwards;
 }
 
@@ -191,16 +190,16 @@
 }
 
 .choice-button:hover {
-    background-image: linear-gradient(to right, #8c3a3a, #a84343, #8c3a3a); /* Slight red gradient */
-    color: #f5e0e0; /* Lighter text for red background */
-    border-color: #c76666; /* Reddish border */
+    background-image: linear-gradient(to right, #8c3a3a, #a84343, #8c3a3a);
+    color: #f5e0e0;
+    border-color: #c76666;
     transform: translateY(-2px) scale(1.01);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 10px rgba(200, 50, 50, 0.3); /* Subtle red glow */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 10px rgba(200, 50, 50, 0.3);
 }
 
 .choice-button:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.4), /* Original purple focus for consistency */
+    box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.4),
                  0 0 10px rgba(138, 95, 255, 0.3),
                  0 4px 8px rgba(0, 0, 0, 0.3);
     color: #ffffff;
@@ -208,16 +207,16 @@
 
 .choice-button:active {
     transform: translateY(0px) scale(1);
-    background-image: linear-gradient(to right, #6d2b2b, #833333, #6d2b2b); /* Darker red gradient */
-    border-color: #a35252; /* Darker reddish border */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 0 5px rgba(0,0,0,0.2); /* Inner shadow for pressed look */
+    background-image: linear-gradient(to right, #6d2b2b, #833333, #6d2b2b);
+    border-color: #a35252;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 0 5px rgba(0,0,0,0.2);
     color: #f0d8d8;
 }
 
 .choice-prefix {
     margin-right: 12px;
     font-weight: 700;
-    color: #b39ddb; /* Keeping this purple for now, or change to a reddish hue if preferred */
+    color: #b39ddb;
     font-size: 1rem;
     flex-shrink: 0;
 }
@@ -230,9 +229,33 @@
 
 /* Parchment texture for story output */
 .parchment-bg {
-    background-color: rgba(255, 252, 235, 0.05); /* Light mode parchment base */
+    background-color: rgba(255, 252, 235, 0.05);
     background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
 }
+
+/* === Start: Enhanced Story Readability === */
+#story-output {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem; /* Approx 16px, good base for readability */
+    /* Padding is p-5 (1.25rem) from Tailwind on the element */
+}
+
+#story-output p {
+    line-height: 1.75;
+    margin-bottom: 1.25rem;
+    color: #374151; /* Tailwind text-gray-700 for light mode */
+    transition: color 0.3s ease;
+}
+
+#story-output p:last-child {
+    margin-bottom: 0;
+}
+
+.dark #story-output p {
+    color: #e5e7eb; /* Tailwind text-gray-200 for dark mode */
+}
+/* === End: Enhanced Story Readability === */
+
 
 /* Animated loading spinner */
 .magic-spinner { display: inline-block; position: relative; width: 80px; height: 80px; }
@@ -252,19 +275,23 @@
 @media (max-width: 768px) {
     .scroll-border::before, .scroll-border::after { height: 20px; }
     .ornamental-corners::before, .ornamental-corners::after, .ornamental-corners > span::before, .ornamental-corners > span::after { width: 15px; height: 15px; }
-    #quit-game-container { /* Adjust quit button position for smaller screens if needed */
-        bottom: 1rem;
-        right: 1rem; /* Example: closer to edge on mobile */
-        left: auto; /* Ensure left is not set if it was previously */
+    #quit-game-container {
+        /* Ensure quit button is well-placed on mobile */
+        /* Example: Make it full width at bottom or adjust fixed positioning */
+         width: auto; /* Allow button to size itself */
+         position: fixed; /* Re-apply fixed if preferred for mobile */
+         bottom: 1rem;
+         right: 1rem;
+         left: auto;
     }
-    .start-button-sticky-container { /* Ensure sticky start button has enough space on mobile */
-        bottom: 0.5rem;
+    .start-button-sticky-container {
+        bottom: 0.5rem; /* Less space if quit button is also fixed */
     }
 }
 
 /* Dark mode specific styles */
 .dark .parchment-bg {
-    background-color: rgba(30, 30, 46, 0.85); /* Slightly more opaque for better text contrast */
+    background-color: rgba(30, 30, 46, 0.85);
 }
 
 /* Typewriter cursor animation */
@@ -275,7 +302,7 @@
 .floating { animation: floating 3s ease-in-out infinite; }
 @keyframes floating { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
 
-/* Title styling (sparkle from original fantasy.css) */
+/* Title styling */
 .sparkle { position: relative; text-shadow: 0 0 10px rgba(138, 95, 255, 0.7); }
 
 /* Fog effect for the background */
@@ -300,25 +327,21 @@
 .choice-selected { animation: choiceSelected 0.5s forwards; }
 @keyframes choiceSelected {
     0% { transform: scale(1); box-shadow: 0 0 0 rgba(138, 95, 255, 0); }
-    50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(200, 50, 50, 0.5); } /* Changed to red to match hover */
-    100% { transform: scale(1); box-shadow: 0 0 10px rgba(200, 50, 50, 0.3); } /* Changed to red */
+    50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(200, 50, 50, 0.5); } /* Red glow for selected choice */
+    100% { transform: scale(1); box-shadow: 0 0 10px rgba(200, 50, 50, 0.3); }
 }
 
 /* Start Adventure Button (#start-button) specific animation styles */
-/* Class .fixed-visible is applied to #start-button in HTML */
-.fixed-visible {
-    /* Base visual styling for #start-button is in index.html <style> as .fantasy-button */
-    /* These are additional animations and properties for when it's visible */
-    position: relative; /* Ensures z-index and transform work as expected */
+.fixed-visible { /* This class is on #start-button */
+    position: relative;
     z-index: 10;
-    transform: translateZ(0); /* Promotes to its own layer for smoother animation */
-    display: block; /* Or flex if content needs alignment */
+    transform: translateZ(0);
+    display: block;
     width: 100%;
-    box-shadow: 0 0 15px rgba(138, 95, 255, 0.8); /* From original .fixed-visible */
-    /* Background image is from .fantasy-button in index.html style */
-    background-size: 200% auto; /* For gradient animation */
-    animation: pulse-attention 2s infinite, gradient-shift 3s ease infinite; /* From original .fixed-visible */
-    /* margin-bottom: 20px; -> This is handled by its container now */
+    box-shadow: 0 0 15px rgba(138, 95, 255, 0.8);
+    background-size: 200% auto;
+    animation: pulse-attention 2s infinite, gradient-shift 3s ease infinite;
+    /* Base background, padding, etc., come from .fantasy-button in index.html <style> */
 }
 
 @keyframes pulse-attention {
@@ -337,27 +360,26 @@
     position: sticky;
     bottom: 1rem;
     z-index: 50;
-    background-color: var(--sticky-bg, rgba(17, 24, 39, 0.95)); /* Uses CSS var from index.html */
+    background-color: var(--sticky-bg, rgba(17, 24, 39, 0.95));
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
-    transition: background-color 0.3s ease; /* For theme changes */
+    transition: background-color 0.3s ease;
 }
 
 /* Subtle text glow for general headings */
-h1.glow-effect, h2.glow-effect, h3.glow-effect, label.glow-effect { /* More specific glow for text */
-    text-shadow: 0 0 8px rgba(138, 95, 255, 0.5); /* Adjusted from original */
+h1.glow-effect, h2.glow-effect, h3.glow-effect, label.glow-effect {
+    text-shadow: 0 0 8px rgba(138, 95, 255, 0.5);
 }
 
-/* Smooth scrolling for anchor links (if any) */
+/* Smooth scrolling */
 html {
     scroll-behavior: smooth;
 }
 
 /* === Start: Quit Game Button Styling === */
 #quit-game-container {
-    width: 100%; /* Make the container take full width of its column space */
-    /* Tailwind classes on the div in HTML ('flex justify-end pt-2') handle alignment and top padding */
-    /* No fixed positioning needed here as it's part of the document flow */
+    width: 100%; /* Takes full width of its parent column in the HTML */
+    /* Tailwind classes 'flex justify-end pt-2' on the div itself handle alignment */
 }
 
 .quit-button {
@@ -372,8 +394,8 @@ html {
     transition: background-image 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     text-align: center;
-    width: auto; /* Button takes its natural width */
-    display: inline-block; /* Allows alignment by parent's flex/text-align */
+    width: 100%;
+    display: inline-block;
 }
 
 .quit-button:hover {
