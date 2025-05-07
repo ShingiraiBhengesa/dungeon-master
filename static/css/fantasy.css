@@ -78,13 +78,14 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M20,0 L20,20 L0,20 C5,15 15,5 20,0 Z' fill='%238a5fff' opacity='0.5'/%3E%3C/svg%3E");
 }
 
-/* Enhanced buttons */
-.fantasy-button {
+/* General fantasy button (used for Start Adventure) - sheen effect */
+.fantasy-button { /* This class is applied to #start-button */
     position: relative;
     overflow: hidden;
+    /* Base visual styles (colors, padding, etc.) for #start-button are in index.html <style> */
 }
 
-.fantasy-button::before {
+.fantasy-button::before { /* Sheen effect */
     content: '';
     position: absolute;
     top: 0;
@@ -92,19 +93,19 @@
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.7s;
+    transition: left 0.7s ease-in-out;
 }
 
-.fantasy-button:hover::before {
+.fantasy-button:hover::before { /* Trigger sheen on hover */
     left: 100%;
 }
 
-/* Magical glow effects */
+/* Magical glow effects (can be applied to various elements) */
 .magic-glow {
     position: relative;
 }
 
-.magic-glow::after {
+.magic-glow::after { /* The actual glow, appears on hover */
     content: '';
     position: absolute;
     top: 0;
@@ -115,19 +116,20 @@
     box-shadow: 0 0 15px 5px rgba(138, 95, 255, 0.5);
     opacity: 0;
     transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
 .magic-glow:hover::after {
     opacity: 1;
 }
 
-/* Animated background patterns */
+/* Animated background patterns for body */
 .bg-pattern {
     position: relative;
     overflow: hidden;
 }
 
-.bg-pattern::before {
+.bg-pattern::before { /* Main repeating pattern */
     content: '';
     position: absolute;
     top: 0;
@@ -135,408 +137,10 @@
     right: 0;
     bottom: 0;
     background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238a5fff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    z-index: -1;
+    z-index: -2;
 }
 
-/* === Start: Choice Button Enhancements === */
-
-/* Container for choices - minor adjustments if needed */
-#choices-container {
-    max-height: 35vh; /* Slightly increased max-height if choices can be many */
-    overflow-y: auto;
-    padding-top: 0.5rem; /* Optional: small padding at the top */
-    /* Tailwind's space-y-3 class on the container will handle vertical spacing if buttons are direct children */
-}
-
-/* New styling for individual choice buttons */
-.choice-button {
-    background-image: linear-gradient(to right, #3a2d5c, #4f3a7d, #3a2d5c); /* Deep purple gradient */
-    color: #d1c4e9; /* Light purple text for contrast */
-    border: 1px solid #7e57c2; /* Complementary border */
-    border-radius: 6px; /* Standard rounded corners */
-    padding: 0.9rem 1.25rem; /* Comfortable padding */
-    width: 100%; /* Make buttons take full width of their container */
-    text-align: left; /* Align text to the left for readability */
-    font-family: 'Inter', sans-serif; /* Use 'Inter' for choice text clarity */
-    font-size: 0.95rem; /* Slightly smaller font size if necessary */
-    cursor: pointer;
-    transition: background-image 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, color 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-    display: flex; /* Use flexbox to align prefix and text */
-    align-items: center; /* Vertically align items, especially if text wraps */
-    margin-bottom: 0.75rem; /* Explicit margin between choice buttons (Tailwind's space-y might need to be removed from container if this is used) */
-    opacity: 0; /* Start hidden for fade-in animation */
-    animation: fadeInChoice 0.5s ease-out forwards; /* Animation defined below */
-}
-
-@keyframes fadeInChoice {
-    to {
-        opacity: 1;
-    }
-}
-
-.choice-button:hover {
-    background-image: linear-gradient(to right, #4f3a7d, #674ea7, #4f3a7d); /* Lighter gradient on hover */
-    color: #ede7f6; /* Brighter text on hover */
-    transform: translateY(-2px) scale(1.01); /* Subtle lift and scale effect */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
-}
-
-.choice-button:focus {
-    outline: none; /* Remove default browser outline */
-    /* Custom focus style: a prominent ring and shadow */
-    box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.6), /* Outer ring */
-                 0 0 10px rgba(138, 95, 255, 0.4), /* Inner glow */
-                 0 4px 8px rgba(0, 0, 0, 0.3); /* Existing shadow */
-    color: #ffffff; /* Ensure text is highly visible on focus */
-}
-
-.choice-button:active {
-    transform: translateY(0px) scale(1); /* Button press effect */
-    background-image: linear-gradient(to right, #312550, #463170, #312550); /* Darker gradient on active/click */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reset shadow to base */
-}
-
-/* Styling for the choice prefix (e.g., "1.", "A.") */
-.choice-prefix {
-    margin-right: 12px; /* Space between prefix and the choice text */
-    font-weight: 700; /* Bolder prefix */
-    color: #b39ddb; /* Distinct, slightly lighter purple for the prefix */
-    font-size: 1rem; /* Ensure prefix is clearly visible */
-    flex-shrink: 0; /* Prevent prefix from shrinking if choice text is long */
-}
-
-/* Styling for the main text of the choice */
-.choice-text {
-    flex-grow: 1; /* Allows the text to take up available space */
-    line-height: 1.4; /* Improve readability of multi-line choices */
-}
-
-/*
-   The .choice-selected animation is already in your fantasy.css:
-   .choice-selected { animation: choiceSelected 0.5s forwards; }
-   @keyframes choiceSelected {
-       0% { transform: scale(1); box-shadow: 0 0 0 rgba(138, 95, 255, 0); }
-       50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(138, 95, 255, 0.5); }
-       100% { transform: scale(1); box-shadow: 0 0 10px rgba(138, 95, 255, 0.3); }
-   }
-   We will use this.
-*/
-
-/* === End: Choice Button Enhancements === */
-
-/* Animated choice buttons */
-.choice-button-enter {
-    opacity: 0;
-    transform: translateY(20px);
-}
-
-.choice-button-enter-active {
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 300ms, transform 300ms;
-}
-
-.choice-button-exit {
-    opacity: 1;
-}
-
-.choice-button-exit-active {
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: opacity 300ms, transform 300ms;
-}
-
-/* Parchment texture for story output */
-.parchment-bg {
-    background-color: rgba(255, 252, 235, 0.05);
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
-}
-
-/* Animated loading spinner */
-.magic-spinner {
-    display: inline-block;
-    position: relative;
-    width: 80px;
-    height: 80px;
-}
-
-.magic-spinner div {
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #8a5fff;
-    animation: magic-spinner 1.2s linear infinite;
-}
-
-.magic-spinner div:nth-child(1) {
-    top: 8px;
-    left: 8px;
-    animation-delay: 0s;
-}
-
-.magic-spinner div:nth-child(2) {
-    top: 8px;
-    left: 32px;
-    animation-delay: -0.4s;
-}
-
-.magic-spinner div:nth-child(3) {
-    top: 8px;
-    left: 56px;
-    animation-delay: -0.8s;
-}
-
-.magic-spinner div:nth-child(4) {
-    top: 32px;
-    left: 8px;
-    animation-delay: -0.4s;
-}
-
-.magic-spinner div:nth-child(5) {
-    top: 32px;
-    left: 32px;
-    animation-delay: -0.8s;
-}
-
-.magic-spinner div:nth-child(6) {
-    top: 32px;
-    left: 56px;
-    animation-delay: -1.2s;
-}
-
-.magic-spinner div:nth-child(7) {
-    top: 56px;
-    left: 8px;
-    animation-delay: -0.8s;
-}
-
-.magic-spinner div:nth-child(8) {
-    top: 56px;
-    left: 32px;
-    animation-delay: -1.2s;
-}
-
-.magic-spinner div:nth-child(9) {
-    top: 56px;
-    left: 56px;
-    animation-delay: -1.6s;
-}
-
-@keyframes magic-spinner {
-    0%, 100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 0.5;
-        transform: scale(0.5);
-    }
-}
-
-/* Responsive design adjustments */
-@media (max-width: 768px) {
-    .scroll-border::before,
-    .scroll-border::after {
-        height: 20px;
-    }
-    
-    .ornamental-corners::before,
-    .ornamental-corners::after,
-    .ornamental-corners > span::before,
-    .ornamental-corners > span::after {
-        width: 15px;
-        height: 15px;
-    }
-}
-
-/* Dark mode specific styles */
-.dark .parchment-bg {
-    background-color: rgba(30, 30, 46, 0.7);
-}
-
-/* Typewriter cursor animation */
-@keyframes cursorBlink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-.typewriter-cursor {
-    display: inline-block;
-    width: 3px;
-    height: 1em;
-    background-color: currentColor;
-    margin-left: 2px;
-    animation: cursorBlink 1s step-end infinite;
-}
-
-/* Floating elements animation */
-.floating {
-    animation: floating 3s ease-in-out infinite;
-}
-
-@keyframes floating {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
-}
-
-/* Title styling without sparkle */
-.sparkle {
-    position: relative;
-    text-shadow: 0 0 10px rgba(138, 95, 255, 0.7);
-}
-
-/* Fog effect for the background */
-.fog-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: -1;
-    pointer-events: none;
-}
-
-.fog {
-    position: absolute;
-    width: 200%;
-    height: 100vh;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ffffff' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23ffffff' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpattern id='b' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Ccircle fill='%23ffffff' cx='50' cy='50' r='50' opacity='0.05'/%3E%3C/pattern%3E%3Crect width='100%25' height='100%25' fill='url(%23a)'/%3E%3Crect width='100%25' height='100%25' fill='url(%23b)'/%3E%3C/svg%3E");
-    background-size: cover;
-    opacity: 0.5;
-}
-
-.fog-1 {
-    animation: fogAnimation 60s linear infinite;
-}
-
-.fog-2 {
-    animation: fogAnimation 45s linear infinite reverse;
-    opacity: 0.4;
-}
-
-.fog-3 {
-    animation: fogAnimation 30s linear infinite;
-    opacity: 0.3;
-}
-
-@keyframes fogAnimation {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-}
-
-/* Torch light effect */
-.torch-light {
-    position: relative;
-    overflow: hidden;
-}
-
-.torch-light::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 50% 50%, rgba(255, 200, 100, 0.2), transparent 60%);
-    animation: torchFlicker 5s infinite alternate;
-    mix-blend-mode: overlay;
-    pointer-events: none;
-}
-
-@keyframes torchFlicker {
-    0%, 100% { opacity: 0.5; }
-    25% { opacity: 0.4; }
-    50% { opacity: 0.6; }
-    75% { opacity: 0.5; }
-}
-
-/* Magical runes that appear on hover */
-.magical-runes {
-    position: relative;
-}
-
-.magical-runes::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M30,30 L70,30 M30,50 L70,50 M30,70 L70,70 M50,30 L50,70' stroke='%238a5fff' stroke-width='2' opacity='0.3'/%3E%3Ccircle cx='50' cy='50' r='40' stroke='%238a5fff' stroke-width='2' fill='none' opacity='0.3'/%3E%3C/svg%3E");
-    background-size: 100px 100px;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
-
-.magical-runes:hover::before {
-    opacity: 1;
-}
-
-/* Animated choice selection */
-.choice-selected {
-    animation: choiceSelected 0.5s forwards;
-}
-
-@keyframes choiceSelected {
-    0% { transform: scale(1); box-shadow: 0 0 0 rgba(138, 95, 255, 0); }
-    50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(138, 95, 255, 0.5); }
-    100% { transform: scale(1); box-shadow: 0 0 10px rgba(138, 95, 255, 0.3); }
-}
-
-/* Ensure the Begin Adventure button is always visible */
-.fixed-visible {
-    position: relative;
-    z-index: 100;
-    transform: translateZ(0);
-    transition: all 0.3s ease;
-    animation: pulse-attention 2s infinite;
-    display: block;
-    width: 100%;
-    box-shadow: 0 0 15px rgba(138, 95, 255, 0.8);
-    background-image: linear-gradient(to right, #4c2882, #6a359c, #8a5fff, #6a359c, #4c2882);
-    background-size: 200% auto;
-    animation: pulse-attention 2s infinite, gradient-shift 3s ease infinite;
-    margin-bottom: 20px; /* Add margin to ensure it doesn't overlap with other elements */
-}
-
-@keyframes pulse-attention {
-    0%, 100% { box-shadow: 0 0 15px rgba(138, 95, 255, 0.8); }
-    50% { box-shadow: 0 0 25px rgba(138, 95, 255, 1); }
-}
-
-@keyframes gradient-shift {
-    0% { background-position: 0% center; }
-    50% { background-position: 100% center; }
-    100% { background-position: 0% center; }
-}
-
-/* Sticky container for the button */
-.sticky {
-    position: -webkit-sticky;
-    position: sticky;
-    bottom: 1rem;
-    z-index: 50;
-}
-
-/* Smooth transitions for all elements */
-* {
-    transition: all 0.3s ease;
-}
-
-/* Improved button hover effect */
-.fantasy-button:hover {
-    background-image: linear-gradient(to right, #6a359c, #8a5fff, #6a359c);
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2), 0 0 20px rgba(138, 95, 255, 0.6);
-    letter-spacing: 0.5px;
-}
-
-/* Enhanced background effects */
-.bg-pattern::after {
+.bg-pattern::after { /* Pulsing radial gradient overlay */
     content: '';
     position: absolute;
     top: 0;
@@ -553,12 +157,241 @@
     100% { opacity: 0.7; }
 }
 
-/* Subtle text glow for headings */
-h1, h2, h3, label {
-    text-shadow: 0 0 5px rgba(138, 95, 255, 0.3);
+/* === Start: Choice Button Enhancements === */
+#choices-container {
+    max-height: 35vh; /* Consistent with index.html */
+    overflow-y: auto;
+    padding-top: 0.5rem;
 }
 
-/* Smooth scrolling */
+.choice-button {
+    background-image: linear-gradient(to right, #3a2d5c, #4f3a7d, #3a2d5c); /* Original purple base */
+    color: #d1c4e9;
+    border: 1px solid #7e57c2;
+    border-radius: 6px;
+    padding: 0.9rem 1.25rem;
+    width: 100%;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-image 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem; /* Handles spacing, ensure no space-y on parent in HTML */
+    opacity: 0; /* Start hidden for fade-in */
+    animation: fadeInChoice 0.5s ease-out forwards;
+}
+
+@keyframes fadeInChoice {
+    to {
+        opacity: 1;
+    }
+}
+
+.choice-button:hover {
+    background-image: linear-gradient(to right, #8c3a3a, #a84343, #8c3a3a); /* Slight red gradient */
+    color: #f5e0e0; /* Lighter text for red background */
+    border-color: #c76666; /* Reddish border */
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 10px rgba(200, 50, 50, 0.3); /* Subtle red glow */
+}
+
+.choice-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.4), /* Original purple focus for consistency */
+                 0 0 10px rgba(138, 95, 255, 0.3),
+                 0 4px 8px rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+}
+
+.choice-button:active {
+    transform: translateY(0px) scale(1);
+    background-image: linear-gradient(to right, #6d2b2b, #833333, #6d2b2b); /* Darker red gradient */
+    border-color: #a35252; /* Darker reddish border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 0 5px rgba(0,0,0,0.2); /* Inner shadow for pressed look */
+    color: #f0d8d8;
+}
+
+.choice-prefix {
+    margin-right: 12px;
+    font-weight: 700;
+    color: #b39ddb; /* Keeping this purple for now, or change to a reddish hue if preferred */
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.choice-text {
+    flex-grow: 1;
+    line-height: 1.4;
+}
+/* === End: Choice Button Enhancements === */
+
+/* Parchment texture for story output */
+.parchment-bg {
+    background-color: rgba(255, 252, 235, 0.05); /* Light mode parchment base */
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+/* Animated loading spinner */
+.magic-spinner { display: inline-block; position: relative; width: 80px; height: 80px; }
+.magic-spinner div { position: absolute; width: 16px; height: 16px; border-radius: 50%; background: #8a5fff; animation: magic-spinner 1.2s linear infinite; }
+.magic-spinner div:nth-child(1) { top: 8px; left: 8px; animation-delay: 0s; }
+.magic-spinner div:nth-child(2) { top: 8px; left: 32px; animation-delay: -0.4s; }
+.magic-spinner div:nth-child(3) { top: 8px; left: 56px; animation-delay: -0.8s; }
+.magic-spinner div:nth-child(4) { top: 32px; left: 8px; animation-delay: -0.4s; }
+.magic-spinner div:nth-child(5) { top: 32px; left: 32px; animation-delay: -0.8s; }
+.magic-spinner div:nth-child(6) { top: 32px; left: 56px; animation-delay: -1.2s; }
+.magic-spinner div:nth-child(7) { top: 56px; left: 8px; animation-delay: -0.8s; }
+.magic-spinner div:nth-child(8) { top: 56px; left: 32px; animation-delay: -1.2s; }
+.magic-spinner div:nth-child(9) { top: 56px; left: 56px; animation-delay: -1.6s; }
+@keyframes magic-spinner { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.5); } }
+
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+    .scroll-border::before, .scroll-border::after { height: 20px; }
+    .ornamental-corners::before, .ornamental-corners::after, .ornamental-corners > span::before, .ornamental-corners > span::after { width: 15px; height: 15px; }
+    #quit-game-container { /* Adjust quit button position for smaller screens if needed */
+        bottom: 1rem;
+        right: 1rem; /* Example: closer to edge on mobile */
+        left: auto; /* Ensure left is not set if it was previously */
+    }
+    .start-button-sticky-container { /* Ensure sticky start button has enough space on mobile */
+        bottom: 0.5rem;
+    }
+}
+
+/* Dark mode specific styles */
+.dark .parchment-bg {
+    background-color: rgba(30, 30, 46, 0.85); /* Slightly more opaque for better text contrast */
+}
+
+/* Typewriter cursor animation */
+@keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.typewriter-cursor { display: inline-block; width: 3px; height: 1em; background-color: currentColor; margin-left: 2px; animation: cursorBlink 1s step-end infinite; }
+
+/* Floating elements animation */
+.floating { animation: floating 3s ease-in-out infinite; }
+@keyframes floating { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+
+/* Title styling (sparkle from original fantasy.css) */
+.sparkle { position: relative; text-shadow: 0 0 10px rgba(138, 95, 255, 0.7); }
+
+/* Fog effect for the background */
+.fog-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1; pointer-events: none; }
+.fog { position: absolute; width: 200%; height: 100vh; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ffffff' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23ffffff' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpattern id='b' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Ccircle fill='%23ffffff' cx='50' cy='50' r='50' opacity='0.05'/%3E%3C/pattern%3E%3Crect width='100%25' height='100%25' fill='url(%23a)'/%3E%3Crect width='100%25' height='100%25' fill='url(%23b)'/%3E%3C/svg%3E"); background-size: cover; opacity: 0.5; }
+.fog-1 { animation: fogAnimation 60s linear infinite; }
+.fog-2 { animation: fogAnimation 45s linear infinite reverse; opacity: 0.4; }
+.fog-3 { animation: fogAnimation 30s linear infinite; opacity: 0.3; }
+@keyframes fogAnimation { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* Torch light effect */
+.torch-light { position: relative; overflow: hidden; }
+.torch-light::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 50% 50%, rgba(255, 200, 100, 0.2), transparent 60%); animation: torchFlicker 5s infinite alternate; mix-blend-mode: overlay; pointer-events: none; }
+@keyframes torchFlicker { 0%, 100% { opacity: 0.5; } 25% { opacity: 0.4; } 50% { opacity: 0.6; } 75% { opacity: 0.5; } }
+
+/* Magical runes that appear on hover */
+.magical-runes { position: relative; }
+.magical-runes::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M30,30 L70,30 M30,50 L70,50 M30,70 L70,70 M50,30 L50,70' stroke='%238a5fff' stroke-width='2' opacity='0.3'/%3E%3Ccircle cx='50' cy='50' r='40' stroke='%238a5fff' stroke-width='2' fill='none' opacity='0.3'/%3E%3C/svg%3E"); background-size: 100px 100px; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
+.magical-runes:hover::before { opacity: 1; }
+
+/* Animated choice selection */
+.choice-selected { animation: choiceSelected 0.5s forwards; }
+@keyframes choiceSelected {
+    0% { transform: scale(1); box-shadow: 0 0 0 rgba(138, 95, 255, 0); }
+    50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(200, 50, 50, 0.5); } /* Changed to red to match hover */
+    100% { transform: scale(1); box-shadow: 0 0 10px rgba(200, 50, 50, 0.3); } /* Changed to red */
+}
+
+/* Start Adventure Button (#start-button) specific animation styles */
+/* Class .fixed-visible is applied to #start-button in HTML */
+.fixed-visible {
+    /* Base visual styling for #start-button is in index.html <style> as .fantasy-button */
+    /* These are additional animations and properties for when it's visible */
+    position: relative; /* Ensures z-index and transform work as expected */
+    z-index: 10;
+    transform: translateZ(0); /* Promotes to its own layer for smoother animation */
+    display: block; /* Or flex if content needs alignment */
+    width: 100%;
+    box-shadow: 0 0 15px rgba(138, 95, 255, 0.8); /* From original .fixed-visible */
+    /* Background image is from .fantasy-button in index.html style */
+    background-size: 200% auto; /* For gradient animation */
+    animation: pulse-attention 2s infinite, gradient-shift 3s ease infinite; /* From original .fixed-visible */
+    /* margin-bottom: 20px; -> This is handled by its container now */
+}
+
+@keyframes pulse-attention {
+    0%, 100% { box-shadow: 0 0 15px rgba(138, 95, 255, 0.8); }
+    50% { box-shadow: 0 0 25px rgba(138, 95, 255, 1); }
+}
+@keyframes gradient-shift {
+    0% { background-position: 0% center; }
+    50% { background-position: 100% center; }
+    100% { background-position: 0% center; }
+}
+
+/* Sticky container for the #start-button's wrapper div */
+.start-button-sticky-container {
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 1rem;
+    z-index: 50;
+    background-color: var(--sticky-bg, rgba(17, 24, 39, 0.95)); /* Uses CSS var from index.html */
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    transition: background-color 0.3s ease; /* For theme changes */
+}
+
+/* Subtle text glow for general headings */
+h1.glow-effect, h2.glow-effect, h3.glow-effect, label.glow-effect { /* More specific glow for text */
+    text-shadow: 0 0 8px rgba(138, 95, 255, 0.5); /* Adjusted from original */
+}
+
+/* Smooth scrolling for anchor links (if any) */
 html {
     scroll-behavior: smooth;
 }
+
+/* === Start: Quit Game Button Styling === */
+#quit-game-container {
+    width: 100%; /* Make the container take full width of its column space */
+    /* Tailwind classes on the div in HTML ('flex justify-end pt-2') handle alignment and top padding */
+    /* No fixed positioning needed here as it's part of the document flow */
+}
+
+.quit-button {
+    background-image: linear-gradient(to right, #782020, #9c2a2a, #782020);
+    color: #f5e0e0;
+    border: 1px solid #c75050;
+    border-radius: 6px;
+    padding: 0.75rem 1.5rem;
+    font-family: 'MedievalSharp', cursive;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-image 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: auto; /* Button takes its natural width */
+    display: inline-block; /* Allows alignment by parent's flex/text-align */
+}
+
+.quit-button:hover {
+    background-image: linear-gradient(to right, #9c2a2a, #b83232, #9c2a2a);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3), 0 0 15px rgba(200, 50, 50, 0.4);
+}
+
+.quit-button:active {
+    background-image: linear-gradient(to right, #601818, #782020, #601818);
+    transform: translateY(0px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.quit-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(176, 50, 50, 0.6),
+                 0 0 10px rgba(200, 50, 50, 0.4);
+}
+/* === End: Quit Game Button Styling === */

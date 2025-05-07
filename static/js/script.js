@@ -4,24 +4,65 @@
  */
 
 // --- State ---
-let currentSessionId = null; // Initialize later
+let currentSessionId = null;
 let isLoading = false;
 
-// --- Helper Functions ---
+// --- DOM Element References (to be cached on DOMContentLoaded) ---
+let storyOutput, choicesContainer, initialPromptContainer, initialPromptInput,
+    startButtonContainer, startButton, imageContainer, sceneImage, imagePlaceholder,
+    audioPlayerContainer, audioPlayer, loadingOverlay, sessionIdInput,
+    quitGameContainer, quitButton;
 
-/** Clears previous button states and disables interaction */
+/**
+ * Caches references to frequently used DOM elements.
+ */
+function cacheDOMElements() {
+    storyOutput = document.getElementById('story-output');
+    choicesContainer = document.getElementById('choices-container');
+    initialPromptContainer = document.getElementById('initial-prompt-container');
+    initialPromptInput = document.getElementById('initial-prompt');
+    startButtonContainer = document.getElementById('start-button-container');
+    startButton = document.getElementById('start-button');
+    imageContainer = document.getElementById('image-container');
+    sceneImage = document.getElementById('scene-image');
+    imagePlaceholder = document.getElementById('image-placeholder');
+    audioPlayerContainer = document.getElementById('audio-player-container');
+    audioPlayer = document.getElementById('audio-player');
+    loadingOverlay = document.getElementById('loading-overlay');
+    sessionIdInput = document.getElementById('session-id');
+    quitGameContainer = document.getElementById('quit-game-container');
+    quitButton = document.getElementById('quit-button');
+}
+
+/**
+ * Validates if all essential DOM elements are found.
+ * @returns {boolean} True if all essential elements are found, false otherwise.
+ */
+function validateDOMElements() {
+    const elements = {
+        storyOutput, choicesContainer, initialPromptContainer, initialPromptInput,
+        startButtonContainer, startButton, imageContainer, sceneImage, imagePlaceholder,
+        audioPlayerContainer, audioPlayer, loadingOverlay, sessionIdInput,
+        quitGameContainer, quitButton
+    };
+    for (const [key, value] of Object.entries(elements)) {
+        if (!value) {
+            console.error(`Essential DOM element not found on load: ${key}`);
+            return false;
+        }
+    }
+    return true;
+}
+
+// --- UI Interaction Control ---
 function disableInteraction() {
-     const loadingOverlay = document.getElementById('loading-overlay');
-     const choicesContainer = document.getElementById('choices-container');
-     const startButton = document.getElementById('start-button');
-
      isLoading = true;
      if (loadingOverlay) {
-         loadingOverlay.style.display = 'flex';
          loadingOverlay.classList.remove('hidden');
+         loadingOverlay.style.display = 'flex'; // Ensure it's visible
      }
-     const buttons = choicesContainer ? choicesContainer.querySelectorAll('button') : [];
-     buttons.forEach(button => {
+     const choiceButtons = choicesContainer ? choicesContainer.querySelectorAll('.choice-button') : [];
+     choiceButtons.forEach(button => {
         button.disabled = true;
         button.classList.add('opacity-50', 'cursor-not-allowed');
      });
@@ -29,48 +70,56 @@ function disableInteraction() {
         startButton.disabled = true;
         startButton.classList.add('opacity-50', 'cursor-not-allowed');
      }
+     if (quitButton) {
+        quitButton.disabled = true;
+        quitButton.classList.add('opacity-50', 'cursor-not-allowed');
+     }
 }
 
-/** Enables interaction */
 function enableInteraction() {
-    const loadingOverlay = document.getElementById('loading-overlay');
-    const choicesContainer = document.getElementById('choices-container');
-    const startButton = document.getElementById('start-button');
-    const initialPromptArea = document.getElementById('initial-prompt-area');
-
     isLoading = false;
     if (loadingOverlay) {
-        loadingOverlay.style.display = 'none';
         loadingOverlay.classList.add('hidden');
-    } else {
-        console.warn("enableInteraction: loadingOverlay not found.");
+        loadingOverlay.style.display = 'none'; // Ensure it's hidden
     }
-
-    const buttons = choicesContainer ? choicesContainer.querySelectorAll('button') : [];
-    buttons.forEach(button => {
+    const choiceButtons = choicesContainer ? choicesContainer.querySelectorAll('.choice-button') : [];
+    choiceButtons.forEach(button => {
         button.disabled = false;
         button.classList.remove('opacity-50', 'cursor-not-allowed');
     });
-    if (startButton && initialPromptArea && !initialPromptArea.classList.contains('hidden')) {
+
+    // Start button enabled only if game hasn't started (prompt is visible)
+    if (startButton && initialPromptContainer && !initialPromptContainer.classList.contains('hidden')) {
         startButton.disabled = false;
         startButton.classList.remove('opacity-50', 'cursor-not-allowed');
     } else if (startButton) {
-         startButton.disabled = true;
-         startButton.classList.add('opacity-50', 'cursor-not-allowed');
+        startButton.disabled = true;
+        startButton.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+
+    // Quit button enabled only if game has started (quit container is visible)
+    if (quitButton && quitGameContainer && !quitGameContainer.classList.contains('hidden')) {
+        quitButton.disabled = false;
+        quitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+    } else if (quitButton) {
+         quitButton.disabled = true; // Should be disabled if not visible / game not active
     }
 }
 
-
-/**
- * Updates the story output area with new text.
- * @param {string} text - The text to display.
- */
-function updateStoryOutput(text) {
-    const storyOutput = document.getElementById('story-output');
+// --- UI Update Functions ---
+function updateStoryOutput(text, isError = false) {
     if (!storyOutput) return;
     storyOutput.innerHTML = '';
     
-    if (window.dungeonEffects && window.dungeonEffects.typeStory) {
+    if (isError) {
+        const errorElement = document.createElement('div');
+        errorElement.innerHTML = `
+            <p class="font-bold text-red-600 dark:text-red-400 text-lg mb-2 font-medieval">An Error Occurred</p>
+            <p class="text-red-700 dark:text-red-300">${text}</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-3">Please check the server logs or try refreshing the page.</p>`;
+        errorElement.classList.add('text-center', 'p-4', 'border', 'border-red-300', 'dark:border-red-700', 'bg-red-50', 'dark:bg-red-900/30', 'rounded-md', 'fade-in');
+        storyOutput.appendChild(errorElement);
+    } else if (window.dungeonEffects?.typeStory) { // Optional chaining for safety
         const formattedText = text.split('\n').map(line => line.trim()).filter(line => line).join('<br>');
         window.dungeonEffects.typeStory(formattedText);
     } else {
@@ -79,25 +128,16 @@ function updateStoryOutput(text) {
         paragraph.classList.add('fade-in');
         storyOutput.appendChild(paragraph);
     }
-    
     storyOutput.scrollTop = 0;
 }
 
-/**
- * Updates the scene image display.
- * @param {string|null} imageUrl - The URL of the image to display, or null to hide.
- */
 function updateSceneImage(imageUrl) {
-    const imagePlaceholder = document.getElementById('image-placeholder');
-    const sceneImage = document.getElementById('scene-image');
     if (!imagePlaceholder || !sceneImage) return;
-
-    const defaultPlaceholder = `
+    const defaultPlaceholderHTML = `
         <div class="text-center text-gray-500 dark:text-gray-400">
-            <i class="fas fa-image fa-3x mb-2"></i>
-            <p>Scene visuals will appear here.</p>
+            <i class="fas fa-image fa-4x mb-3 floating"></i>
+            <p class="text-lg">Scene visuals will appear here.</p>
         </div>`;
-     imagePlaceholder.innerHTML = defaultPlaceholder;
 
     if (imageUrl) {
         sceneImage.src = imageUrl;
@@ -108,32 +148,18 @@ function updateSceneImage(imageUrl) {
             console.error("Failed to load image:", imageUrl);
             sceneImage.classList.add('hidden');
             imagePlaceholder.classList.remove('hidden');
-            imagePlaceholder.innerHTML = '<p class="text-red-500 font-semibold text-center">Error loading image.</p>';
+            imagePlaceholder.innerHTML = '<p class="text-red-500 font-semibold text-center font-medieval text-lg">Error loading image.</p>';
         };
-         sceneImage.onload = () => {
-             console.log("Image loaded successfully");
-         }
+        sceneImage.onload = () => console.log("Image loaded successfully:", imageUrl);
     } else {
         sceneImage.classList.add('hidden');
         sceneImage.removeAttribute('src');
         imagePlaceholder.classList.remove('hidden');
-        if (imagePlaceholder.innerHTML.includes("Scene visuals will appear here")) {
-             imagePlaceholder.innerHTML = `
-                <div class="text-center text-gray-500 dark:text-gray-400">
-                    <i class="fas fa-eye-slash fa-3x mb-2"></i>
-                    <p>No visual generated.</p>
-                </div>`;
-        }
+        imagePlaceholder.innerHTML = defaultPlaceholderHTML;
     }
 }
 
-/**
- * Updates the audio player.
- * @param {string|null} audioUrl - The URL of the audio file, or null to hide.
- */
 function updateAudioPlayer(audioUrl) {
-    const audioPlayerContainer = document.getElementById('audio-player-container');
-    const audioPlayer = document.getElementById('audio-player');
     if (!audioPlayerContainer || !audioPlayer) return;
     if (audioUrl) {
         audioPlayer.src = audioUrl;
@@ -143,56 +169,41 @@ function updateAudioPlayer(audioUrl) {
     } else {
         audioPlayerContainer.classList.add('hidden');
         audioPlayer.removeAttribute('src');
+        if (!audioPlayer.paused) audioPlayer.pause();
     }
 }
 
-
-/**
- * Updates the choices buttons.
- * @param {string[]} choices - An array of choice strings.
- */
 function updateChoices(choices) {
-    const choicesContainer = document.getElementById('choices-container');
-    const initialPromptArea = document.getElementById('initial-prompt-area');
-    if (!choicesContainer || !initialPromptArea) {
-        console.error("Choices container or initial prompt area not found.");
-        return;
-    }
-    choicesContainer.innerHTML = ''; // Clear previous choices
+    if (!choicesContainer || !initialPromptContainer) return;
+    choicesContainer.innerHTML = '';
 
     if (!choices || choices.length === 0) {
-        if (initialPromptArea.classList.contains('hidden')) { // Only show "story concludes" if game has started
+        if (initialPromptContainer.classList.contains('hidden')) {
             const endMessage = document.createElement('p');
             endMessage.textContent = "The story concludes, or perhaps the path ahead is unclear...";
-            endMessage.classList.add('italic', 'text-center', 'text-gray-500', 'dark:text-gray-400', 'mt-4', 'fade-in');
+            endMessage.classList.add('italic', 'text-center', 'text-gray-500', 'dark:text-gray-400', 'mt-4', 'fade-in', 'font-medieval');
             choicesContainer.appendChild(endMessage);
         }
         return;
     }
 
-    // Add a heading for the adventure options
     const optionsHeading = document.createElement('h2');
     optionsHeading.textContent = "Choose Your Next Step";
-    optionsHeading.classList.add('text-2xl', 'font-medieval', 'text-center', 'mb-4', 'mt-2', 'text-purple-300', 'glow-effect', 'fade-in', 'font-bold');
+    optionsHeading.classList.add('text-2xl', 'font-medieval', 'text-center', 'mb-4', 'mt-2', 'text-purple-300', 'dark:text-purple-300', 'glow-effect', 'fade-in', 'font-bold');
     choicesContainer.appendChild(optionsHeading);
 
-    choices.forEach((originalChoiceText, index) => { // Used 'originalChoiceText' for clarity
+    choices.forEach((originalChoiceText, index) => {
         const button = document.createElement('button');
-        button.classList.add('choice-button'); // Apply the primary style from fantasy.css
-        
-        // Staggered animation for fadeInChoice (defined in fantasy.css for .choice-button)
+        button.classList.add('choice-button');
         button.style.animationDelay = `${index * 0.15}s`;
 
-        // Get clean choice text (removes any leading "1. ", "2. " etc.)
         const cleanChoiceText = originalChoiceText.replace(/^\d+\.\s*/, '');
-        button.dataset.choiceText = cleanChoiceText; // Store clean choice text for potential use
+        button.dataset.choiceText = cleanChoiceText;
 
-        // Create the prefix span (e.g., "1.")
         const prefixSpan = document.createElement('span');
         prefixSpan.classList.add('choice-prefix');
         prefixSpan.textContent = `${index + 1}.`;
 
-        // Create the text span for the actual choice description
         const textSpan = document.createElement('span');
         textSpan.classList.add('choice-text');
         textSpan.textContent = cleanChoiceText;
@@ -200,127 +211,84 @@ function updateChoices(choices) {
         button.appendChild(prefixSpan);
         button.appendChild(textSpan);
 
-        // Add click event listener
         button.addEventListener('click', (e) => {
-            // Apply selection animation from fantasy.css
             e.currentTarget.classList.add('choice-selected');
-            
-            // Wait for animation to be noticeable before processing the choice
             setTimeout(() => {
-                handleChoiceClick(cleanChoiceText); // Pass the clean choice text
-            }, 300); // Adjust delay as needed
+                handleChoiceClick(cleanChoiceText);
+            }, 300); // Match animation duration in CSS if possible
         });
         
-        // Optional: If you want to keep the 'torch-light' effect on hover for choice buttons
-        button.addEventListener('mouseenter', () => {
-            button.classList.add('torch-light');
-        });
-        button.addEventListener('mouseleave', () => {
-            button.classList.remove('torch-light');
-        });
+        button.addEventListener('mouseenter', () => button.classList.add('torch-light'));
+        button.addEventListener('mouseleave', () => button.classList.remove('torch-light'));
         
-        choicesContainer.appendChild(button); // Append the button ONCE
+        choicesContainer.appendChild(button);
     });
 }
 
-/**
- * Displays an error message prominently in the story output area.
- * @param {string} message - The error message.
- */
 function displayError(message) {
-     const storyOutput = document.getElementById('story-output');
-     const choicesContainer = document.getElementById('choices-container');
-     const initialPromptArea = document.getElementById('initial-prompt-area');
-     if (!storyOutput || !choicesContainer) return;
      console.error("Game Error:", message);
-     storyOutput.innerHTML = '';
-     const errorElement = document.createElement('div');
-     errorElement.innerHTML = `
-        <p class="font-bold text-red-600 dark:text-red-400 text-lg mb-2">An Error Occurred</p>
-        <p class="text-red-700 dark:text-red-300">${message}</p>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mt-3">Please check the server logs or try refreshing the page.</p>
-     `;
-     errorElement.classList.add('text-center', 'p-4', 'border', 'border-red-300', 'dark:border-red-700', 'bg-red-50', 'dark:bg-red-900/30', 'rounded-md', 'fade-in');
-     storyOutput.appendChild(errorElement);
-
-     choicesContainer.innerHTML = '';
+     updateStoryOutput(message, true);
+     updateChoices([]);
      updateSceneImage(null);
      updateAudioPlayer(null);
-     if (initialPromptArea) initialPromptArea.classList.remove('hidden');
+
+    if (initialPromptContainer) initialPromptContainer.classList.remove('hidden');
+    if (startButtonContainer) startButtonContainer.classList.remove('hidden');
+    if (quitGameContainer) quitGameContainer.classList.add('hidden');
 }
 
-
 // --- API Interaction ---
-
-/**
- * Sends data to the backend API.
- * @param {string} endpoint - The API endpoint (e.g., '/start', '/choose').
- * @param {object} data - The data payload to send.
- * @returns {Promise<object|null>} - The JSON response from the backend, or null on fetch error.
- */
 async function postToBackend(endpoint, data) {
     if (!currentSessionId) {
-        displayError("Session ID is missing. Please refresh the page.");
+        displayError("Session ID is missing. Please refresh or ensure it's correctly set up.");
         return null;
     }
     disableInteraction();
     let responseData = null;
 
     try {
-        console.log(`Sending request to ${endpoint} with data:`, data);
+        const payload = { ...data, session_id: currentSessionId };
+        console.log(`Sending request to ${endpoint} with payload:`, payload);
         const response = await fetch(endpoint, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', },
-            body: JSON.stringify({...data, session_id: currentSessionId }),
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
         });
 
-        try {
-            responseData = await response.json();
-            console.log(`Received response from ${endpoint} (status ${response.status}):`, responseData);
-        } catch (jsonError) {
-            console.error("Failed to parse JSON response:", jsonError);
-            if (!response.ok) {
-                 throw new Error(`Server returned non-JSON response: ${response.status} ${response.statusText}`);
-            } else {
-                 throw new Error("Received unexpected non-JSON response from server.");
-            }
-        }
+        responseData = await response.json();
+        console.log(`Received response from ${endpoint} (status ${response.status}):`, responseData);
 
         if (!response.ok) {
-            const errorMsg = responseData?.error || `Request failed with status ${response.status}`;
+            const errorMsg = responseData?.error || `Request failed with status ${response.status}.`;
             throw new Error(errorMsg);
         }
-        return responseData; // Success
+        return responseData;
 
     } catch (error) {
         console.error(`Error during fetch to ${endpoint}:`, error);
         displayError(error.message || 'Network error or server unavailable.');
-        return null; // Indicate failure
+        return null;
     } finally {
-        setTimeout(enableInteraction, 0);
+        setTimeout(enableInteraction, 50);
     }
 }
 
 // --- Event Handlers ---
-
-/**
- * Handles the click event for the "Begin Adventure" button.
- */
 async function handleStartClick() {
-    const initialPromptInput = document.getElementById('initial-prompt');
-    const initialPromptArea = document.getElementById('initial-prompt-area');
     if (!initialPromptInput || isLoading) return;
     const prompt = initialPromptInput.value.trim();
     if (!prompt) {
         alert("Please enter a starting description for your adventure.");
+        initialPromptInput.focus();
         return;
     }
 
-    if (window.dungeonEffects && window.dungeonEffects.sounds) {
-        window.dungeonEffects.sounds.play('success', { volume: 0.4 });
-    }
+    if (window.dungeonEffects?.sounds) window.dungeonEffects.sounds.play('success', { volume: 0.4 });
 
-    if (initialPromptArea) initialPromptArea.classList.add('hidden');
+    if (initialPromptContainer) initialPromptContainer.classList.add('hidden');
+    if (startButtonContainer) startButtonContainer.classList.add('hidden');
+    if (quitGameContainer) quitGameContainer.classList.remove('hidden');
+
     updateStoryOutput("Generating the start of your adventure...");
     updateChoices([]);
     updateSceneImage(null);
@@ -329,143 +297,112 @@ async function handleStartClick() {
     const response = await postToBackend('/start', { prompt });
 
     if (response) {
-        if (response.error && !response.scene) {
-             displayError(response.error);
-             if (initialPromptArea) initialPromptArea.classList.remove('hidden');
-        } else {
-            updateStoryOutput(response.scene || "(The story didn't generate text for this turn.)");
-            updateSceneImage(response.image_url);
-            updateAudioPlayer(response.audio_url);
-            updateChoices(response.choices);
-            if (response.error) {
-                 console.warn("Asset generation warning:", response.error);
-                 const warningElement = document.createElement('p');
-                 warningElement.textContent = `Note: ${response.error}`;
-                 warningElement.classList.add('text-yellow-600', 'dark:text-yellow-400', 'text-sm', 'mt-2', 'text-center');
-                 const storyOutput = document.getElementById('story-output');
-                 if (storyOutput) storyOutput.appendChild(warningElement);
-            }
+        updateStoryOutput(response.scene || "(The story didn't generate text for this turn.)");
+        updateSceneImage(response.image_url);
+        updateAudioPlayer(response.audio_url);
+        updateChoices(response.choices);
+        if (response.error) {
+             console.warn("Asset generation warning:", response.error);
+             const warningElement = document.createElement('p');
+             warningElement.textContent = `Note: ${response.error}`;
+             warningElement.classList.add('text-yellow-600', 'dark:text-yellow-400', 'text-sm', 'mt-2', 'text-center', 'fade-in', 'font-medieval');
+             if (storyOutput) storyOutput.appendChild(warningElement);
         }
     }
 }
 
-/**
- * Handles the click event for a choice button.
- * @param {string} choiceText - The text of the chosen option (should be clean text without prefix).
- */
 async function handleChoiceClick(choiceText) {
     if (isLoading) return;
-
-    if (window.dungeonEffects && window.dungeonEffects.sounds) {
-        window.dungeonEffects.sounds.play('click', { volume: 0.4 });
-    }
+    if (window.dungeonEffects?.sounds) window.dungeonEffects.sounds.play('click', { volume: 0.4 });
 
     console.log("Choice made:", choiceText);
     updateStoryOutput("Processing your choice...");
-    updateChoices([]); // Clear current choices immediately
+    updateChoices([]); 
     updateSceneImage(null); 
     updateAudioPlayer(null);
 
     const response = await postToBackend('/choose', { choice: choiceText });
 
     if (response) {
-        if (response.error && !response.scene) {
-             displayError(response.error);
-        } else {
-            updateStoryOutput(response.scene || "(The story didn't generate text for this turn.)");
-            updateSceneImage(response.image_url);
-            updateAudioPlayer(response.audio_url);
-            updateChoices(response.choices); 
-            if (response.error) { 
-                 console.warn("Asset generation warning:", response.error);
-                 const warningElement = document.createElement('p');
-                 warningElement.textContent = `Note: ${response.error}`;
-                 warningElement.classList.add('text-yellow-600', 'dark:text-yellow-400', 'text-sm', 'mt-2', 'text-center', 'fade-in');
-                 const storyOutput = document.getElementById('story-output');
-                 if (storyOutput) storyOutput.appendChild(warningElement);
-            }
+        updateStoryOutput(response.scene || "(The story didn't generate text for this turn.)");
+        updateSceneImage(response.image_url);
+        updateAudioPlayer(response.audio_url);
+        updateChoices(response.choices);
+        if (response.error) {
+             console.warn("Asset generation warning:", response.error);
+             const warningElement = document.createElement('p');
+             warningElement.textContent = `Note: ${response.error}`;
+             warningElement.classList.add('text-yellow-600', 'dark:text-yellow-400', 'text-sm', 'mt-2', 'text-center', 'fade-in', 'font-medieval');
+             if (storyOutput) storyOutput.appendChild(warningElement);
         }
     }
 }
 
+function handleQuitClick() {
+    if (window.dungeonEffects?.sounds) window.dungeonEffects.sounds.play('click', { volume: 0.3 });
+
+    console.log("Quit Game clicked.");
+    updateStoryOutput("Enter a description below to start your AI-powered adventure!");
+    updateChoices([]);
+    updateSceneImage(null);
+    updateAudioPlayer(null);
+
+    if (initialPromptInput) initialPromptInput.value = '';
+    if (initialPromptContainer) initialPromptContainer.classList.remove('hidden');
+    if (startButtonContainer) startButtonContainer.classList.remove('hidden');
+    if (quitGameContainer) quitGameContainer.classList.add('hidden');
+    
+    enableInteraction();
+    if (initialPromptInput) initialPromptInput.focus();
+}
 
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOMContentLoaded event fired.");
+    console.log("DOMContentLoaded: Initializing DungeonMaster UI...");
+    cacheDOMElements();
 
-    try {
-        const storyOutput = document.getElementById('story-output');
-        const choicesContainer = document.getElementById('choices-container');
-        const initialPromptArea = document.getElementById('initial-prompt-area');
-        const initialPromptInput = document.getElementById('initial-prompt');
-        const startButton = document.getElementById('start-button');
-        const imageContainer = document.getElementById('image-container');
-        const sceneImage = document.getElementById('scene-image');
-        const imagePlaceholder = document.getElementById('image-placeholder');
-        const audioPlayerContainer = document.getElementById('audio-player-container');
-        const audioPlayer = document.getElementById('audio-player');
-        const loadingOverlay = document.getElementById('loading-overlay');
-        const sessionIdInput = document.getElementById('session-id');
-
-        // Basic check for essential elements
-        const elementsToCheck = {
-            storyOutput, choicesContainer, initialPromptArea, initialPromptInput,
-            startButton, imageContainer, sceneImage, imagePlaceholder,
-            audioPlayerContainer, audioPlayer, loadingOverlay, sessionIdInput
-        };
-        
-        let essentialElementsFound = true;
-        for (const [key, value] of Object.entries(elementsToCheck)) {
-            if (!value) {
-                console.error(`Essential DOM element not found on load: ${key}`);
-                essentialElementsFound = false;
-            }
-        }
-
-        if (!essentialElementsFound) {
-            alert("Error initializing the page components. Some elements are missing. Check console (F12).");
-            if(loadingOverlay) loadingOverlay.style.display = 'none';
-            return;
-        }
-
-        currentSessionId = sessionIdInput.value;
-        if (!currentSessionId) {
-            console.warn("Session ID is missing or empty from the input field!");
-            // Potentially display a user-facing error or disable functionality
-        } else {
-            console.log("Session ID found:", currentSessionId);
-        }
-        
-        if (loadingOverlay) {
+    if (!validateDOMElements()) {
+        alert("Critical Error: Some page elements are missing. The application may not function correctly. Please check the console (F12).");
+        if(loadingOverlay) {
+            loadingOverlay.classList.add('hidden');
             loadingOverlay.style.display = 'none';
-            const displayStyle = window.getComputedStyle(loadingOverlay).display;
-            if (displayStyle === 'none') {
-                console.log("Loading overlay display style is now 'none'.");
-            } else {
-                console.error(`Failed to force hide loading overlay! Computed display style is: ${displayStyle}`);
-            }
-        } else {
-             console.error("Loading overlay element not found within DOMContentLoaded!");
         }
-
-        startButton.addEventListener('click', handleStartClick);
-
-        updateStoryOutput("Enter a description below to start your AI-powered adventure!");
-        updateSceneImage(null);
-        updateAudioPlayer(null);
-        enableInteraction();
-
-        console.log("AI DungeonMaster frontend initialization complete.");
-
-    } catch (error) {
-        console.error("Error during DOMContentLoaded initialization:", error);
-        const body = document.querySelector('body');
-        if (body) {
-             body.innerHTML = '<p style="color:red; text-align:center; padding-top: 20px;">A critical error occurred during page initialization. Please check the console (F12) and try refreshing.</p>';
-        }
-        const loadingOverlay = document.getElementById('loading-overlay');
-        if(loadingOverlay) loadingOverlay.style.display = 'none';
+        return;
     }
+    
+    currentSessionId = sessionIdInput.value;
+    if (!currentSessionId) {
+        console.error("CRITICAL: Session ID is missing from the input field on load!");
+        updateStoryOutput("Critical Error: Session ID not found. Unable to start game. Please refresh.", true);
+        if (startButton) startButton.disabled = true; // Disable start button if no session
+        // Hide loading overlay if it was somehow visible
+        if (loadingOverlay) {
+            loadingOverlay.classList.add('hidden');
+            loadingOverlay.style.display = 'none';
+        }
+        return; // Stop further initialization
+    } else {
+        console.log("Session ID loaded:", currentSessionId);
+    }
+    
+    if (loadingOverlay) {
+        loadingOverlay.classList.add('hidden');
+        loadingOverlay.style.display = 'none';
+    }
+
+    if (startButton) startButton.addEventListener('click', handleStartClick);
+    if (quitButton) quitButton.addEventListener('click', handleQuitClick);
+
+    updateStoryOutput("Enter a description below to start your AI-powered adventure!");
+    updateSceneImage(null);
+    updateAudioPlayer(null);
+    if (quitGameContainer) quitGameContainer.classList.add('hidden');
+    if (initialPromptContainer) initialPromptContainer.classList.remove('hidden');
+    if (startButtonContainer) startButtonContainer.classList.remove('hidden');
+    
+    enableInteraction();
+
+    console.log("AI DungeonMaster frontend initialization complete.");
 });
 
-console.log("Script file loaded.");
+console.log("script.js loaded by browser.");
