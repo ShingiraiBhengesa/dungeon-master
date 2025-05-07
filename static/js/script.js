@@ -8,19 +8,17 @@ let currentSessionId = null; // Initialize later
 let isLoading = false;
 
 // --- Helper Functions ---
-// ... (Keep all helper functions like disableInteraction, enableInteraction, updateStoryOutput, etc., exactly as they were in the previous version) ...
+
 /** Clears previous button states and disables interaction */
 function disableInteraction() {
-     const loadingOverlay = document.getElementById('loading-overlay'); // Get element reference here
+     const loadingOverlay = document.getElementById('loading-overlay');
      const choicesContainer = document.getElementById('choices-container');
      const startButton = document.getElementById('start-button');
 
      isLoading = true;
      if (loadingOverlay) {
-         // Use style.display = 'flex' or 'block' depending on your overlay's default display type when visible
-         // Since it uses flex for centering, 'flex' is appropriate.
          loadingOverlay.style.display = 'flex';
-         loadingOverlay.classList.remove('hidden'); // Keep class removal for consistency if needed elsewhere
+         loadingOverlay.classList.remove('hidden');
      }
      const buttons = choicesContainer ? choicesContainer.querySelectorAll('button') : [];
      buttons.forEach(button => {
@@ -41,11 +39,9 @@ function enableInteraction() {
     const initialPromptArea = document.getElementById('initial-prompt-area');
 
     isLoading = false;
-    // Force hide using inline style
     if (loadingOverlay) {
-        console.log("enableInteraction: Forcing loading overlay display to 'none'.");
         loadingOverlay.style.display = 'none';
-        loadingOverlay.classList.add('hidden'); // Also add class for good measure
+        loadingOverlay.classList.add('hidden');
     } else {
         console.warn("enableInteraction: loadingOverlay not found.");
     }
@@ -55,12 +51,10 @@ function enableInteraction() {
         button.disabled = false;
         button.classList.remove('opacity-50', 'cursor-not-allowed');
     });
-    // Only re-enable start button if the initial prompt area is visible
     if (startButton && initialPromptArea && !initialPromptArea.classList.contains('hidden')) {
         startButton.disabled = false;
         startButton.classList.remove('opacity-50', 'cursor-not-allowed');
     } else if (startButton) {
-        // Ensure start button is disabled if prompt area is hidden
          startButton.disabled = true;
          startButton.classList.add('opacity-50', 'cursor-not-allowed');
     }
@@ -76,7 +70,6 @@ function updateStoryOutput(text) {
     if (!storyOutput) return;
     storyOutput.innerHTML = '';
     
-    // Use typewriter effect if available, otherwise fallback to standard display
     if (window.dungeonEffects && window.dungeonEffects.typeStory) {
         const formattedText = text.split('\n').map(line => line.trim()).filter(line => line).join('<br>');
         window.dungeonEffects.typeStory(formattedText);
@@ -161,10 +154,14 @@ function updateAudioPlayer(audioUrl) {
 function updateChoices(choices) {
     const choicesContainer = document.getElementById('choices-container');
     const initialPromptArea = document.getElementById('initial-prompt-area');
-    if (!choicesContainer || !initialPromptArea) return;
-    choicesContainer.innerHTML = '';
+    if (!choicesContainer || !initialPromptArea) {
+        console.error("Choices container or initial prompt area not found.");
+        return;
+    }
+    choicesContainer.innerHTML = ''; // Clear previous choices
+
     if (!choices || choices.length === 0) {
-        if (initialPromptArea.classList.contains('hidden')) {
+        if (initialPromptArea.classList.contains('hidden')) { // Only show "story concludes" if game has started
             const endMessage = document.createElement('p');
             endMessage.textContent = "The story concludes, or perhaps the path ahead is unclear...";
             endMessage.classList.add('italic', 'text-center', 'text-gray-500', 'dark:text-gray-400', 'mt-4', 'fade-in');
@@ -179,43 +176,50 @@ function updateChoices(choices) {
     optionsHeading.classList.add('text-2xl', 'font-medieval', 'text-center', 'mb-4', 'mt-2', 'text-purple-300', 'glow-effect', 'fade-in', 'font-bold');
     choicesContainer.appendChild(optionsHeading);
 
-    choices.forEach((choice, index) => {
+    choices.forEach((originalChoiceText, index) => { // Used 'originalChoiceText' for clarity
         const button = document.createElement('button');
-        button.textContent = choice.replace(/^\d+\.\s*/, '');
-        button.dataset.choiceText = choice;
+        button.classList.add('choice-button'); // Apply the primary style from fantasy.css
         
-        // Apply fantasy styling to choice buttons
-        button.classList.add(
-            'w-full', 'text-left', 'fantasy-panel', 'fantasy-border', 'text-gray-800', 
-            'dark:text-gray-100', 'font-semibold', 'py-3', 'px-4', 'rounded-lg', 
-            'transition', 'duration-150', 'ease-in-out', 'fade-in', 'shadow-sm', 
-            'hover:shadow-md', 'magic-glow', 'magical-runes', 'mb-4'
-        );
-        
-        // Add staggered animation delay
-        button.style.animationDelay = `${index * 0.12}s`;
-        
-        // Add click event with visual feedback
+        // Staggered animation for fadeInChoice (defined in fantasy.css for .choice-button)
+        button.style.animationDelay = `${index * 0.15}s`;
+
+        // Get clean choice text (removes any leading "1. ", "2. " etc.)
+        const cleanChoiceText = originalChoiceText.replace(/^\d+\.\s*/, '');
+        button.dataset.choiceText = cleanChoiceText; // Store clean choice text for potential use
+
+        // Create the prefix span (e.g., "1.")
+        const prefixSpan = document.createElement('span');
+        prefixSpan.classList.add('choice-prefix');
+        prefixSpan.textContent = `${index + 1}.`;
+
+        // Create the text span for the actual choice description
+        const textSpan = document.createElement('span');
+        textSpan.classList.add('choice-text');
+        textSpan.textContent = cleanChoiceText;
+
+        button.appendChild(prefixSpan);
+        button.appendChild(textSpan);
+
+        // Add click event listener
         button.addEventListener('click', (e) => {
-            // Add selection animation class
+            // Apply selection animation from fantasy.css
             e.currentTarget.classList.add('choice-selected');
             
-            // Wait for animation to complete before proceeding
+            // Wait for animation to be noticeable before processing the choice
             setTimeout(() => {
-                handleChoiceClick(choice);
-            }, 300);
+                handleChoiceClick(cleanChoiceText); // Pass the clean choice text
+            }, 300); // Adjust delay as needed
         });
         
-        // Add hover effect
+        // Optional: If you want to keep the 'torch-light' effect on hover for choice buttons
         button.addEventListener('mouseenter', () => {
             button.classList.add('torch-light');
         });
-        
         button.addEventListener('mouseleave', () => {
             button.classList.remove('torch-light');
         });
         
-        choicesContainer.appendChild(button);
+        choicesContainer.appendChild(button); // Append the button ONCE
     });
 }
 
@@ -293,7 +297,6 @@ async function postToBackend(endpoint, data) {
         displayError(error.message || 'Network error or server unavailable.');
         return null; // Indicate failure
     } finally {
-        // Use setTimeout to ensure enableInteraction runs after potential immediate re-renders
         setTimeout(enableInteraction, 0);
     }
 }
@@ -313,7 +316,6 @@ async function handleStartClick() {
         return;
     }
 
-    // Play sound effect if available
     if (window.dungeonEffects && window.dungeonEffects.sounds) {
         window.dungeonEffects.sounds.play('success', { volume: 0.4 });
     }
@@ -345,25 +347,23 @@ async function handleStartClick() {
             }
         }
     }
-    // If response is null, postToBackend handled displaying the fetch/network error
 }
 
 /**
  * Handles the click event for a choice button.
- * @param {string} choiceText - The text of the chosen option.
+ * @param {string} choiceText - The text of the chosen option (should be clean text without prefix).
  */
 async function handleChoiceClick(choiceText) {
     if (isLoading) return;
 
-    // Play sound effect if available
     if (window.dungeonEffects && window.dungeonEffects.sounds) {
         window.dungeonEffects.sounds.play('click', { volume: 0.4 });
     }
 
     console.log("Choice made:", choiceText);
     updateStoryOutput("Processing your choice...");
-    updateChoices([]);
-    updateSceneImage(null);
+    updateChoices([]); // Clear current choices immediately
+    updateSceneImage(null); 
     updateAudioPlayer(null);
 
     const response = await postToBackend('/choose', { choice: choiceText });
@@ -375,18 +375,17 @@ async function handleChoiceClick(choiceText) {
             updateStoryOutput(response.scene || "(The story didn't generate text for this turn.)");
             updateSceneImage(response.image_url);
             updateAudioPlayer(response.audio_url);
-            updateChoices(response.choices);
-            if (response.error) {
+            updateChoices(response.choices); 
+            if (response.error) { 
                  console.warn("Asset generation warning:", response.error);
                  const warningElement = document.createElement('p');
                  warningElement.textContent = `Note: ${response.error}`;
-                 warningElement.classList.add('text-yellow-600', 'dark:text-yellow-400', 'text-sm', 'mt-2', 'text-center');
+                 warningElement.classList.add('text-yellow-600', 'dark:text-yellow-400', 'text-sm', 'mt-2', 'text-center', 'fade-in');
                  const storyOutput = document.getElementById('story-output');
                  if (storyOutput) storyOutput.appendChild(warningElement);
             }
         }
     }
-    // If response is null, postToBackend handled the fetch/network error display
 }
 
 
@@ -408,65 +407,62 @@ document.addEventListener('DOMContentLoaded', () => {
         const loadingOverlay = document.getElementById('loading-overlay');
         const sessionIdInput = document.getElementById('session-id');
 
+        // Basic check for essential elements
+        const elementsToCheck = {
+            storyOutput, choicesContainer, initialPromptArea, initialPromptInput,
+            startButton, imageContainer, sceneImage, imagePlaceholder,
+            audioPlayerContainer, audioPlayer, loadingOverlay, sessionIdInput
+        };
+        
         let essentialElementsFound = true;
-        const elementsToCheck = { /* ... elements ... */ }; // Assume check happens here
-        // ... (element checking code from previous version) ...
-         for (const [key, value] of Object.entries(elementsToCheck)) {
+        for (const [key, value] of Object.entries(elementsToCheck)) {
             if (!value) {
                 console.error(`Essential DOM element not found on load: ${key}`);
                 essentialElementsFound = false;
             }
         }
-         if (!essentialElementsFound) {
+
+        if (!essentialElementsFound) {
             alert("Error initializing the page components. Some elements are missing. Check console (F12).");
-            if(loadingOverlay) loadingOverlay.style.display = 'none'; // Force hide if possible
+            if(loadingOverlay) loadingOverlay.style.display = 'none';
             return;
         }
 
-
         currentSessionId = sessionIdInput.value;
-        console.log("Session ID found:", currentSessionId);
-
-        // Force hide overlay using inline style *within* DOMContentLoaded
-        console.log("Attempting to force hide loading overlay using style.display...");
+        if (!currentSessionId) {
+            console.warn("Session ID is missing or empty from the input field!");
+            // Potentially display a user-facing error or disable functionality
+        } else {
+            console.log("Session ID found:", currentSessionId);
+        }
+        
         if (loadingOverlay) {
             loadingOverlay.style.display = 'none';
-             // Verify
             const displayStyle = window.getComputedStyle(loadingOverlay).display;
             if (displayStyle === 'none') {
                 console.log("Loading overlay display style is now 'none'.");
             } else {
                 console.error(`Failed to force hide loading overlay! Computed display style is: ${displayStyle}`);
-                // As a last resort, try removing it from the DOM entirely, though this is hacky
-                // loadingOverlay.remove();
-                // console.warn("Removed loading overlay from DOM as a fallback.");
             }
         } else {
              console.error("Loading overlay element not found within DOMContentLoaded!");
         }
 
-
-        console.log("Adding event listener to start button.");
         startButton.addEventListener('click', handleStartClick);
 
-        console.log("Setting initial UI state.");
         updateStoryOutput("Enter a description below to start your AI-powered adventure!");
         updateSceneImage(null);
         updateAudioPlayer(null);
-        // Call enableInteraction last to ensure overlay is hidden after setup
         enableInteraction();
-
-        // Initialize ambient background music if available (commented out until sound files are added)
-        // if (window.dungeonEffects && window.dungeonEffects.sounds) {
-        //     window.dungeonEffects.sounds.play('ambient', { volume: 0.2, loop: true });
-        // }
 
         console.log("AI DungeonMaster frontend initialization complete.");
 
     } catch (error) {
         console.error("Error during DOMContentLoaded initialization:", error);
         const body = document.querySelector('body');
-        if (body) { /* ... error display ... */ }
+        if (body) {
+             body.innerHTML = '<p style="color:red; text-align:center; padding-top: 20px;">A critical error occurred during page initialization. Please check the console (F12) and try refreshing.</p>';
+        }
         const loadingOverlay = document.getElementById('loading-overlay');
         if(loadingOverlay) loadingOverlay.style.display = 'none';
     }

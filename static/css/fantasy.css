@@ -138,6 +138,93 @@
     z-index: -1;
 }
 
+/* === Start: Choice Button Enhancements === */
+
+/* Container for choices - minor adjustments if needed */
+#choices-container {
+    max-height: 35vh; /* Slightly increased max-height if choices can be many */
+    overflow-y: auto;
+    padding-top: 0.5rem; /* Optional: small padding at the top */
+    /* Tailwind's space-y-3 class on the container will handle vertical spacing if buttons are direct children */
+}
+
+/* New styling for individual choice buttons */
+.choice-button {
+    background-image: linear-gradient(to right, #3a2d5c, #4f3a7d, #3a2d5c); /* Deep purple gradient */
+    color: #d1c4e9; /* Light purple text for contrast */
+    border: 1px solid #7e57c2; /* Complementary border */
+    border-radius: 6px; /* Standard rounded corners */
+    padding: 0.9rem 1.25rem; /* Comfortable padding */
+    width: 100%; /* Make buttons take full width of their container */
+    text-align: left; /* Align text to the left for readability */
+    font-family: 'Inter', sans-serif; /* Use 'Inter' for choice text clarity */
+    font-size: 0.95rem; /* Slightly smaller font size if necessary */
+    cursor: pointer;
+    transition: background-image 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, color 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    display: flex; /* Use flexbox to align prefix and text */
+    align-items: center; /* Vertically align items, especially if text wraps */
+    margin-bottom: 0.75rem; /* Explicit margin between choice buttons (Tailwind's space-y might need to be removed from container if this is used) */
+    opacity: 0; /* Start hidden for fade-in animation */
+    animation: fadeInChoice 0.5s ease-out forwards; /* Animation defined below */
+}
+
+@keyframes fadeInChoice {
+    to {
+        opacity: 1;
+    }
+}
+
+.choice-button:hover {
+    background-image: linear-gradient(to right, #4f3a7d, #674ea7, #4f3a7d); /* Lighter gradient on hover */
+    color: #ede7f6; /* Brighter text on hover */
+    transform: translateY(-2px) scale(1.01); /* Subtle lift and scale effect */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+}
+
+.choice-button:focus {
+    outline: none; /* Remove default browser outline */
+    /* Custom focus style: a prominent ring and shadow */
+    box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.6), /* Outer ring */
+                 0 0 10px rgba(138, 95, 255, 0.4), /* Inner glow */
+                 0 4px 8px rgba(0, 0, 0, 0.3); /* Existing shadow */
+    color: #ffffff; /* Ensure text is highly visible on focus */
+}
+
+.choice-button:active {
+    transform: translateY(0px) scale(1); /* Button press effect */
+    background-image: linear-gradient(to right, #312550, #463170, #312550); /* Darker gradient on active/click */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reset shadow to base */
+}
+
+/* Styling for the choice prefix (e.g., "1.", "A.") */
+.choice-prefix {
+    margin-right: 12px; /* Space between prefix and the choice text */
+    font-weight: 700; /* Bolder prefix */
+    color: #b39ddb; /* Distinct, slightly lighter purple for the prefix */
+    font-size: 1rem; /* Ensure prefix is clearly visible */
+    flex-shrink: 0; /* Prevent prefix from shrinking if choice text is long */
+}
+
+/* Styling for the main text of the choice */
+.choice-text {
+    flex-grow: 1; /* Allows the text to take up available space */
+    line-height: 1.4; /* Improve readability of multi-line choices */
+}
+
+/*
+   The .choice-selected animation is already in your fantasy.css:
+   .choice-selected { animation: choiceSelected 0.5s forwards; }
+   @keyframes choiceSelected {
+       0% { transform: scale(1); box-shadow: 0 0 0 rgba(138, 95, 255, 0); }
+       50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(138, 95, 255, 0.5); }
+       100% { transform: scale(1); box-shadow: 0 0 10px rgba(138, 95, 255, 0.3); }
+   }
+   We will use this.
+*/
+
+/* === End: Choice Button Enhancements === */
+
 /* Animated choice buttons */
 .choice-button-enter {
     opacity: 0;
