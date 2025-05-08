@@ -249,6 +249,31 @@ h1.glow-effect, h2.glow-effect, h3.glow-effect, label.glow-effect {
 /* Smooth scrolling */
 html { scroll-behavior: smooth; }
 
+/* Styling for contenteditable story output */
+#story-output[contenteditable="true"] {
+    cursor: text;
+    border-color: #a78bfa; /* Purple border to indicate editable */
+    box-shadow: 0 0 10px rgba(167, 139, 250, 0.5); /* Purple glow */
+}
+
+#story-output[contenteditable="true"]:focus {
+    outline: 2px solid #8b5cf6; /* Stronger purple outline on focus */
+    box-shadow: 0 0 15px rgba(139, 93, 246, 0.7);
+}
+
+/* Placeholder styling for contenteditable div */
+#story-output[contenteditable="true"][data-placeholder]:empty:before {
+    content: attr(data-placeholder);
+    color: #9ca3af; /* Tailwind gray-400 */
+    font-style: italic;
+    pointer-events: none; /* Important to allow clicks to focus the div */
+}
+
+.dark #story-output[contenteditable="true"][data-placeholder]:empty:before {
+    color: #6b7280; /* Tailwind gray-500 for dark mode */
+}
+
+
 /* === Start: End Adventure Button Styling === */ /* Renamed from Quit Game */
 #end-adventure-container { /* Renamed from #quit-game-container */
     width: 100%;

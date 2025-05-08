@@ -6,6 +6,7 @@
 // --- State ---
 let currentSessionId = null; // Initialize later
 let isLoading = false;
+const storyOutputPlaceholderText = "Type your adventure's beginning here...";
 
 // --- Helper Functions ---
 
@@ -36,7 +37,7 @@ function enableInteraction() {
     const loadingOverlay = document.getElementById('loading-overlay');
     const choicesContainer = document.getElementById('choices-container');
     const startButton = document.getElementById('start-button');
-    const initialPromptContainer = document.getElementById('initial-prompt-container');
+    const storyOutput = document.getElementById('story-output'); // Added
 
     isLoading = false;
     if (loadingOverlay) {
@@ -51,12 +52,16 @@ function enableInteraction() {
         button.disabled = false;
         button.classList.remove('opacity-50', 'cursor-not-allowed');
     });
-    if (startButton && initialPromptContainer && !initialPromptContainer.classList.contains('hidden')) {
-        startButton.disabled = false;
-        startButton.classList.remove('opacity-50', 'cursor-not-allowed');
-    } else if (startButton) {
-         startButton.disabled = true; // Should be enabled if choices are not present
-         startButton.classList.add('opacity-50', 'cursor-not-allowed');
+
+    // Enable startButton if storyOutput is editable (i.e., game not started)
+    if (startButton) {
+        if (storyOutput && storyOutput.contentEditable === 'true') {
+            startButton.disabled = false;
+            startButton.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+            startButton.disabled = true;
+            startButton.classList.add('opacity-50', 'cursor-not-allowed');
+        }
     }
 }
 
@@ -68,7 +73,24 @@ function enableInteraction() {
 function updateStoryOutput(text) {
     const storyOutput = document.getElementById('story-output');
     if (!storyOutput) return;
-    storyOutput.innerHTML = '';
+
+    // Only update if not editable (i.e., game is active, not in prompt input mode)
+    if (storyOutput.contentEditable === 'true') {
+        // If it's editable and we're trying to update, it's likely a reset to placeholder.
+        // The placeholder is handled by CSS :empty:before, so just clear it.
+        // However, this function is for story updates, not placeholder resets.
+        // For placeholder reset, call a dedicated function or set innerHTML = '' directly.
+        if (text === storyOutputPlaceholderText) { // Special case for resetting to placeholder
+            storyOutput.innerHTML = ''; // Let CSS handle placeholder
+            // Ensure the initial <p> tag for styling is there if CSS relies on it
+            const initialP = document.createElement('p');
+            initialP.classList.add('italic', 'text-gray-400', 'dark:text-gray-500');
+            // storyOutput.appendChild(initialP); // This will prevent :empty selector, CSS handles placeholder
+        }
+        return; 
+    }
+
+    storyOutput.innerHTML = ''; // Clear previous content
     
     if (window.dungeonEffects && window.dungeonEffects.typeStory) {
         const formattedText = text.split('\n').map(line => line.trim()).filter(line => line).join('<br>');
@@ -153,15 +175,17 @@ function updateAudioPlayer(audioUrl) {
  */
 function updateChoices(choices) {
     const choicesContainer = document.getElementById('choices-container');
-    const initialPromptContainer = document.getElementById('initial-prompt-container');
-    if (!choicesContainer || !initialPromptContainer) {
-        console.error("Choices container or initial prompt container not found.");
+    const storyOutput = document.getElementById('story-output'); // Used to check if game has started
+
+    if (!choicesContainer || !storyOutput) {
+        console.error("Choices container or story output not found for updateChoices.");
         return;
     }
     choicesContainer.innerHTML = ''; // Clear previous choices
 
     if (!choices || choices.length === 0) {
-        if (initialPromptContainer.classList.contains('hidden')) { // Only show "story concludes" if game has started
+        // Game has started if storyOutput is NOT editable
+        if (storyOutput.contentEditable === 'false') { 
             const endMessage = document.createElement('p');
             endMessage.textContent = "The story concludes, or perhaps the path ahead is unclear...";
             endMessage.classList.add('italic', 'text-center', 'text-gray-500', 'dark:text-gray-400', 'mt-4', 'fade-in');
@@ -230,11 +254,23 @@ function updateChoices(choices) {
 function displayError(message) {
      const storyOutput = document.getElementById('story-output');
      const choicesContainer = document.getElementById('choices-container');
-     const initialPromptContainer = document.getElementById('initial-prompt-container');
-     const endAdventureContainer = document.getElementById('end-adventure-container'); // Renamed
+     // const initialPromptContainer = document.getElementById('initial-prompt-container'); // Removed
+     const endAdventureContainer = document.getElementById('end-adventure-container');
+     const startButton = document.getElementById('start-button');
+     const startButtonContainer = document.getElementById('start-button-container'); // Added
+
      if (!storyOutput || !choicesContainer) return;
      console.error("Game Error:", message);
-     storyOutput.innerHTML = '';
+
+     storyOutput.contentEditable = 'true'; // Make it editable again
+     storyOutput.innerHTML = ''; // Clear content to show CSS placeholder
+     // Add the initial p tag for placeholder styling if needed, or rely on :empty:before
+     const placeholderP = document.createElement('p');
+     placeholderP.classList.add('italic', 'text-gray-400', 'dark:text-gray-500');
+     placeholderP.textContent = storyOutputPlaceholderText;
+     storyOutput.appendChild(placeholderP);
+
+
      const errorElement = document.createElement('div');
      errorElement.innerHTML = `
         <p class="font-bold text-red-600 dark:text-red-400 text-lg mb-2">An Error Occurred</p>
@@ -242,13 +278,17 @@ function displayError(message) {
         <p class="text-sm text-gray-600 dark:text-gray-400 mt-3">Please check the server logs or try refreshing the page.</p>
      `;
      errorElement.classList.add('text-center', 'p-4', 'border', 'border-red-300', 'dark:border-red-700', 'bg-red-50', 'dark:bg-red-900/30', 'rounded-md', 'fade-in');
-     storyOutput.appendChild(errorElement);
+     // Prepend error so placeholder logic doesn't get confused
+     storyOutput.insertBefore(errorElement, storyOutput.firstChild);
+
 
      choicesContainer.innerHTML = '';
      updateSceneImage(null);
      updateAudioPlayer(null);
-     if (initialPromptContainer) initialPromptContainer.classList.remove('hidden');
-     if (endAdventureContainer) endAdventureContainer.classList.add('hidden'); // Hide end adventure button on error
+     if (startButtonContainer) startButtonContainer.classList.remove('hidden'); // Show start button container
+     if (startButton) startButton.classList.remove('hidden');
+     if (endAdventureContainer) endAdventureContainer.classList.add('hidden');
+     enableInteraction();
 }
 
 
@@ -309,14 +349,22 @@ async function postToBackend(endpoint, data) {
  * Handles the click event for the "Begin Adventure" button.
  */
 async function handleStartClick() {
-    const initialPromptInput = document.getElementById('initial-prompt');
-    const initialPromptContainer = document.getElementById('initial-prompt-container');
-    const startButton = document.getElementById('start-button'); // Get the start button
-    const endAdventureContainer = document.getElementById('end-adventure-container'); // Renamed
-    if (!initialPromptInput || isLoading) return;
-    const prompt = initialPromptInput.value.trim();
+    const storyOutput = document.getElementById('story-output');
+    const startButton = document.getElementById('start-button');
+    const startButtonContainer = document.getElementById('start-button-container'); // Added
+    const endAdventureContainer = document.getElementById('end-adventure-container');
+
+    if (!storyOutput || isLoading) return;
+
+    let prompt = storyOutput.textContent.trim();
+    // If the content is the placeholder, treat as empty
+    if (prompt === storyOutputPlaceholderText || storyOutput.querySelector('p.italic')?.textContent === storyOutputPlaceholderText) {
+        prompt = "";
+    }
+
     if (!prompt) {
-        alert("Please enter a starting description for your adventure.");
+        alert("Please type a starting description for your adventure into the scroll.");
+        storyOutput.focus();
         return;
     }
 
@@ -324,9 +372,17 @@ async function handleStartClick() {
         window.dungeonEffects.sounds.play('success', { volume: 0.4 });
     }
 
-    if (initialPromptContainer) initialPromptContainer.classList.add('hidden');
-    if (startButton) startButton.classList.add('hidden'); // Explicitly hide the start button
-    updateStoryOutput("Generating the start of your adventure...");
+    storyOutput.contentEditable = 'false'; // Make story output non-editable
+    if (startButton) startButton.classList.add('hidden');
+    if (startButtonContainer) startButtonContainer.classList.add('hidden'); // Hide container too
+    
+    // Clear the prompt text before showing "Generating..."
+    storyOutput.innerHTML = ''; 
+    const generatingP = document.createElement('p');
+    generatingP.textContent = "Generating the start of your adventure...";
+    storyOutput.appendChild(generatingP);
+    // updateStoryOutput("Generating the start of your adventure..."); // This won't work as it's not editable
+
     updateChoices([]);
     updateSceneImage(null);
     updateAudioPlayer(null);
@@ -334,15 +390,19 @@ async function handleStartClick() {
     const response = await postToBackend('/start', { prompt });
 
     if (response) {
+        storyOutput.contentEditable = 'false'; // Ensure it's not editable
         if (response.error && !response.scene) {
-             displayError(response.error); // This will also hide endAdventureContainer
-             // if (initialPromptContainer) initialPromptContainer.classList.remove('hidden'); // Handled by displayError
+             displayError(response.error); 
+             // displayError will make storyOutput editable again and show start button
         } else {
+            // updateStoryOutput will now work as contentEditable is false
             updateStoryOutput(response.scene || "(The story didn't generate text for this turn.)");
             updateSceneImage(response.image_url);
             updateAudioPlayer(response.audio_url);
             updateChoices(response.choices);
-            if (endAdventureContainer) endAdventureContainer.classList.remove('hidden'); // Show end adventure button
+            if (endAdventureContainer) endAdventureContainer.classList.remove('hidden');
+            if (startButton) startButton.classList.add('hidden'); 
+            if (startButtonContainer) startButtonContainer.classList.add('hidden'); // Ensure container is hidden
             if (response.error) {
                  console.warn("Asset generation warning:", response.error);
                  const warningElement = document.createElement('p');
@@ -405,30 +465,39 @@ function handleEndAdventureClick() { // Renamed function
     console.log("End Adventure button clicked.");
 
     if (window.dungeonEffects && window.dungeonEffects.sounds) {
-        // Using 'error' sound for quit, or you can add a specific 'quit' sound
         window.dungeonEffects.sounds.play('error', { volume: 0.4 });
     }
 
-    const initialPromptContainer = document.getElementById('initial-prompt-container');
-    const initialPromptInput = document.getElementById('initial-prompt');
+    const storyOutput = document.getElementById('story-output');
     const startButton = document.getElementById('start-button');
-    const endAdventureContainer = document.getElementById('end-adventure-container'); // Renamed
-    const choicesContainer = document.getElementById('choices-container'); // To clear it
+    const startButtonContainer = document.getElementById('start-button-container'); // Added
+    const endAdventureContainer = document.getElementById('end-adventure-container');
+    const choicesContainer = document.getElementById('choices-container');
 
     // Reset UI to initial pre-game state
-    updateStoryOutput("Enter a description below to start your AI-powered adventure!");
+    if (storyOutput) {
+        storyOutput.contentEditable = 'true';
+        storyOutput.innerHTML = ''; // Clear content, CSS placeholder will appear
+        // Add the initial p tag for placeholder styling
+        const placeholderP = document.createElement('p');
+        placeholderP.classList.add('italic', 'text-gray-400', 'dark:text-gray-500');
+        placeholderP.textContent = storyOutputPlaceholderText;
+        storyOutput.appendChild(placeholderP);
+        storyOutput.focus();
+    }
+    
     updateChoices([]); 
     updateSceneImage(null);
     updateAudioPlayer(null);
     
-    if (choicesContainer) choicesContainer.innerHTML = ''; // Explicitly clear choices container
+    if (choicesContainer) choicesContainer.innerHTML = '';
 
-    if (initialPromptContainer) initialPromptContainer.classList.remove('hidden');
-    if (initialPromptInput) initialPromptInput.value = ''; // Clear previous prompt
+    // if (initialPromptContainer) initialPromptContainer.classList.remove('hidden'); // Removed
+    // if (initialPromptInput) initialPromptInput.value = ''; // Removed
     if (startButton) startButton.classList.remove('hidden');
-    if (endAdventureContainer) endAdventureContainer.classList.add('hidden'); // Renamed
+    if (startButtonContainer) startButtonContainer.classList.remove('hidden'); // Show container again
+    if (endAdventureContainer) endAdventureContainer.classList.add('hidden');
 
-    // Ensure interaction is re-enabled for the start button
     setTimeout(enableInteraction, 0); 
 }
 
@@ -440,9 +509,10 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         const storyOutput = document.getElementById('story-output');
         const choicesContainer = document.getElementById('choices-container');
-        const initialPromptContainer = document.getElementById('initial-prompt-container');
-        const initialPromptInput = document.getElementById('initial-prompt');
+        // const initialPromptContainer = document.getElementById('initial-prompt-container'); // Removed
+        // const initialPromptInput = document.getElementById('initial-prompt'); // Removed
         const startButton = document.getElementById('start-button');
+        const startButtonContainer = document.getElementById('start-button-container'); // Added
         const imageContainer = document.getElementById('image-container');
         const sceneImage = document.getElementById('scene-image');
         const imagePlaceholder = document.getElementById('image-placeholder');
@@ -450,15 +520,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const audioPlayer = document.getElementById('audio-player');
         const loadingOverlay = document.getElementById('loading-overlay');
         const sessionIdInput = document.getElementById('session-id');
-        const endAdventureButton = document.getElementById('end-adventure-button'); // Renamed
-        const endAdventureContainer = document.getElementById('end-adventure-container'); // Renamed
+        const endAdventureButton = document.getElementById('end-adventure-button');
+        const endAdventureContainer = document.getElementById('end-adventure-container');
 
         // Basic check for essential elements
         const elementsToCheck = {
-            storyOutput, choicesContainer, initialPromptContainer, initialPromptInput,
-            startButton, imageContainer, sceneImage, imagePlaceholder,
+            storyOutput, choicesContainer, /*initialPromptContainer, initialPromptInput,*/ // Removed
+            startButton, startButtonContainer, imageContainer, sceneImage, imagePlaceholder, // Added startButtonContainer
             audioPlayerContainer, audioPlayer, loadingOverlay, sessionIdInput,
-            endAdventureButton, endAdventureContainer // Renamed elements to check
+            endAdventureButton, endAdventureContainer
         };
         
         let essentialElementsFound = true;
@@ -496,14 +566,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         startButton.addEventListener('click', handleStartClick);
-        if (endAdventureButton) { // Add event listener for end adventure button
-            endAdventureButton.addEventListener('click', handleEndAdventureClick); // Use renamed handler
+        if (endAdventureButton) {
+            endAdventureButton.addEventListener('click', handleEndAdventureClick);
         }
-        if (endAdventureContainer) { // Ensure end adventure container is hidden initially
+        if (endAdventureContainer) {
             endAdventureContainer.classList.add('hidden');
         }
 
-        updateStoryOutput("Enter a description below to start your AI-powered adventure!");
+        if (storyOutput) {
+            storyOutput.contentEditable = 'true';
+            // Set initial placeholder via direct manipulation if CSS :empty:before is not enough
+            // Or ensure the HTML has the initial <p> tag for the placeholder.
+            // The HTML already has: <p class="italic text-gray-400 dark:text-gray-500">Type your adventure's beginning here...</p>
+            // So, we just need to handle clearing it on focus.
+
+            storyOutput.addEventListener('focus', () => {
+                if (storyOutput.textContent.trim() === storyOutputPlaceholderText && storyOutput.querySelector('p.italic')) {
+                    storyOutput.innerHTML = ''; // Clear the placeholder <p>
+                }
+            });
+
+            storyOutput.addEventListener('blur', () => {
+                if (storyOutput.textContent.trim() === '') {
+                    storyOutput.innerHTML = ''; // Clear any stray newlines or spaces
+                    // Re-add the placeholder <p> tag or rely on CSS :empty:before
+                    // For CSS :empty:before to work, innerHTML must be truly empty.
+                    // If we want the <p> tag for styling, we add it back:
+                    const placeholderP = document.createElement('p');
+                    placeholderP.classList.add('italic', 'text-gray-400', 'dark:text-gray-500');
+                    placeholderP.textContent = storyOutputPlaceholderText;
+                    storyOutput.appendChild(placeholderP);
+                }
+            });
+        }
+        
+        // updateStoryOutput("Enter a description below to start your AI-powered adventure!"); // Placeholder handled by HTML/CSS/focus/blur
         updateSceneImage(null);
         updateAudioPlayer(null);
         enableInteraction();
