@@ -177,7 +177,7 @@
         bottom: -15px;
     }
     .ornamental-corners::before, .ornamental-corners::after, .ornamental-corners > span::before, .ornamental-corners > span::after { width: 15px; height: 15px; }
-    #quit-game-container { width: auto; position: fixed; bottom: 1rem; right: 1rem; left: auto; }
+    #end-adventure-container { width: auto; position: fixed; bottom: 1rem; right: 1rem; left: auto; } /* Renamed from #quit-game-container */
     .start-button-sticky-container { bottom: 0.5rem; }
 }
 
@@ -249,19 +249,19 @@ h1.glow-effect, h2.glow-effect, h3.glow-effect, label.glow-effect {
 /* Smooth scrolling */
 html { scroll-behavior: smooth; }
 
-/* === Start: Quit Game Button Styling === */
-#quit-game-container {
+/* === Start: End Adventure Button Styling === */ /* Renamed from Quit Game */
+#end-adventure-container { /* Renamed from #quit-game-container */
     width: 100%;
 }
-.quit-button {
+.end-adventure-button-style { /* Renamed from .quit-button */
     background-image: linear-gradient(to right, #782020, #9c2a2a, #782020);
     color: #f5e0e0; border: 1px solid #c75050; border-radius: 6px;
     padding: 0.75rem 1.5rem; font-family: 'MedievalSharp', cursive; font-size: 1.1rem;
     cursor: pointer; transition: background-image 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); text-align: center;
-    width: auto; display: inline-block;
+    width: 100%; display: inline-block;
 }
-.quit-button:hover { background-image: linear-gradient(to right, #9c2a2a, #b83232, #9c2a2a); color: #ffffff; transform: translateY(-2px); box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3), 0 0 15px rgba(200, 50, 50, 0.4); }
-.quit-button:active { background-image: linear-gradient(to right, #601818, #782020, #601818); transform: translateY(0px); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
-.quit-button:focus { outline: none; box-shadow: 0 0 0 3px rgba(176, 50, 50, 0.6), 0 0 10px rgba(200, 50, 50, 0.4); }
-/* === End: Quit Game Button Styling === */
+.end-adventure-button-style:hover { background-image: linear-gradient(to right, #9c2a2a, #b83232, #9c2a2a); color: #ffffff; transform: translateY(-2px); box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3), 0 0 15px rgba(200, 50, 50, 0.4); }
+.end-adventure-button-style:active { background-image: linear-gradient(to right, #601818, #782020, #601818); transform: translateY(0px); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
+.end-adventure-button-style:focus { outline: none; box-shadow: 0 0 0 3px rgba(176, 50, 50, 0.6), 0 0 10px rgba(200, 50, 50, 0.4); }
+/* === End: End Adventure Button Styling === */
