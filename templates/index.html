@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" class="dark"> <head>
+<html lang="en" class="dark">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI DungeonMaster</title>
@@ -7,17 +8,29 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="/static/css/fantasy.css">
     <style>
+        /* Global Animations & Base Styles */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .fade-in { animation: fadeIn 0.8s ease-in-out; }
+
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         .animate-pulse-custom { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
         
-        /* Enhanced styling */
-        html, body { height: 100%; margin: 0; font-family: 'MedievalSharp', 'Inter', sans-serif; }
-        
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; /* Default to Inter for readability */
+            --sticky-bg-dark: rgba(17, 24, 39, 0.95); /* For dark mode sticky button bg */
+            --sticky-bg-light: rgba(243, 244, 246, 0.95); /* For light mode sticky button bg */
+            transition: background-color 0.3s ease; 
+        }
+        /* Apply CSS variable based on theme */
+        html.dark body { --sticky-bg: var(--sticky-bg-dark); }
+        html:not(.dark) body { --sticky-bg: var(--sticky-bg-light); }
+
+
         /* Scrollbar styling */
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-track { background: #1f2937; } 
         ::-webkit-scrollbar-thumb { 
             background: #4b5563; 
             border-radius: 4px; 
@@ -29,26 +42,37 @@
         audio {
             width: 100%;
             margin-top: 1rem;
-            filter: invert(90%) sepia(15%) saturate(200%) hue-rotate(180deg) brightness(100%) contrast(90%);
+            filter: invert(90%) sepia(15%) saturate(200%) hue-rotate(180deg) brightness(100%) contrast(90%); /* Themed for dark mode */
+        }
+        html:not(.dark) audio { /* Slightly different filter for light mode if needed */
+            filter: invert(10%) sepia(5%) saturate(150%) hue-rotate(180deg) brightness(100%) contrast(90%);
         }
         
         /* Loading overlay */
         #loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(17, 24, 39, 0.8); z-index: 9999;
-            display: flex; justify-content: center; align-items: center;
+            background-color: rgba(17, 24, 39, 0.85); 
+            z-index: 9999;
+            display: flex; /* JS will toggle 'hidden' class which uses display:none !important */
+            justify-content: center; align-items: center;
             backdrop-filter: blur(5px);
+            transition: opacity 0.3s ease-in-out;
         }
         
-        /* Ensure choices container can scroll if needed */
-        #choices-container { max-height: 30vh; overflow-y: auto; }
+        /* Choices container base (max-height is also in fantasy.css) */
+        #choices-container { 
+            max-height: 30vh; 
+            overflow-y: auto; 
+            /* Removed space-y-3, .choice-button CSS handles its margin */
+        }
         
-        /* Fantasy-themed UI elements */
+        /* Fantasy-themed UI elements (Base styles - more specific overrides in fantasy.css) */
         .fantasy-border {
             border: 2px solid transparent;
             border-image: linear-gradient(to right, #8a5fff, #c49fff, #8a5fff);
             border-image-slice: 1;
             box-shadow: 0 0 15px rgba(138, 95, 255, 0.3);
+            transition: box-shadow 0.3s ease;
         }
         
         .fantasy-header {
@@ -56,93 +80,98 @@
             border-bottom: 2px solid #8a5fff;
         }
         
-        .fantasy-button {
+        /* Base style for #start-button (fantasy-button class from original index.html) */
+        .fantasy-button { 
             background-image: linear-gradient(to right, #4c2882, #6a359c, #4c2882);
-            transition: all 0.3s ease;
+            transition: background-image 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
             border: 1px solid #8a5fff;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
-        .fantasy-button:hover {
+        .fantasy-button:hover { /* Hover specifically for #start-button (as per original index.html) */
             background-image: linear-gradient(to right, #6a359c, #8a5fff, #6a359c);
             transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15), 0 0 10px rgba(138, 95, 255, 0.4);
         }
         
         .fantasy-panel {
-            background-color: rgba(26, 26, 46, 0.7);
+            background-color: rgba(26, 26, 46, 0.75); /* Dark theme panel */
             backdrop-filter: blur(5px);
             border-radius: 8px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
-        
-        /* Glowing effect for important elements */
-        .glow-effect {
-            animation: glow 3s ease-in-out infinite alternate;
+        html:not(.dark) .fantasy-panel { /* Light theme panel variation */
+            background-color: rgba(229, 231, 235, 0.75); /* Lighter with blur */
         }
         
-        @keyframes glow {
-            from { box-shadow: 0 0 5px rgba(138, 95, 255, 0.2); }
-            to { box-shadow: 0 0 20px rgba(138, 95, 255, 0.6); }
+        /* More specific glow effect for header title text */
+        h1.glow-effect { 
+            animation: textGlow 2.5s ease-in-out infinite alternate;
         }
+        
+        @keyframes textGlow { 
+            from { text-shadow: 0 0 5px rgba(138, 95, 255, 0.4); }
+            to { text-shadow: 0 0 15px rgba(138, 95, 255, 0.8); }
+        }
+
+        .hidden {
+            display: none !important; 
+        }
+
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=MedievalSharp&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200 flex flex-col h-full overflow-auto bg-pattern">
-    <!-- Fog effect container -->
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200 flex flex-col h-screen overflow-hidden">
     <div class="fog-container">
         <div class="fog fog-1"></div>
         <div class="fog fog-2"></div>
         <div class="fog fog-3"></div>
     </div>
 
-    <header class="fantasy-header text-white p-4 shadow-md flex-shrink-0">
+    <header class="fantasy-header text-white p-4 shadow-lg flex-shrink-0">
         <h1 class="text-3xl font-bold text-center font-medieval glow-effect sparkle">
-            <i class="fas fa-dragon mr-2 floating"></i>AI DungeonMaster<i class="fas fa-hat-wizard ml-2 floating"></i>
+            <i class="fas fa-dragon mr-2 floating" title="The Dragon's Roar - AI Power"></i>AI DungeonMaster<i class="fas fa-hat-wizard ml-2 floating" title="The Wizard's Wisdom - Story Weaver"></i>
         </h1>
     </header>
 
-    <main class="flex-grow container mx-auto p-4 md:p-6 lg:p-8 flex flex-col lg:flex-row gap-6 overflow-auto">
+    <main class="flex-grow container mx-auto p-4 md:p-6 lg:p-8 flex flex-col lg:flex-row gap-6 overflow-y-auto">
 
-        <div class="lg:w-1/2 flex flex-col space-y-4">
-            <div id="story-output" class="fantasy-panel fantasy-border p-5 rounded-lg shadow-md flex-grow overflow-y-auto min-h-[200px] parchment-bg scroll-border ornamental-corners torch-light">
-                <span></span> <!-- Required empty span for ornamental corners -->
-                <p class="italic text-gray-400">Your adventure begins here...</p>
+        <div class="lg:w-1/2 flex flex-col space-y-4"> <div id="story-output" contenteditable="true" class="fantasy-panel fantasy-border p-5 rounded-lg shadow-md flex-grow overflow-y-auto min-h-[250px] parchment-bg scroll-border ornamental-corners torch-light" data-placeholder="Type your adventure's beginning here...">
+                <span></span>
+                <p class="italic text-gray-400 dark:text-gray-500">Type your adventure's beginning here...</p>
             </div>
 
             <div id="audio-player-container" class="hidden flex-shrink-0 fantasy-border p-2 rounded-lg">
                 <audio controls id="audio-player">Your browser does not support the audio element.</audio>
             </div>
 
-            <div id="choices-container" class="space-y-3 flex-shrink-0">
-                <!-- Choices will be inserted here by JavaScript -->
-            </div>
+            <div id="choices-container" class="flex-shrink-0">
+                </div>
 
-            <div id="initial-prompt-area" class="space-y-3 pt-4 flex-shrink-0">
-                <label for="initial-prompt" class="block font-semibold text-lg">
-                    <i class="fas fa-scroll mr-2 floating"></i>Start your adventure:
-                </label>
-                <textarea id="initial-prompt" rows="3" class="w-full p-3 border rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-purple-500 focus:outline-none fantasy-border magical-runes" placeholder="e.g., You stand before a towering, moss-covered gate..."></textarea>
-            </div>
             
-            <!-- Separated button to ensure visibility -->
-            <div class="mt-6 mb-10">
-                <button id="start-button" class="w-full fantasy-button text-white font-bold py-4 px-6 rounded-md magic-glow text-xl fixed-visible">
-                    <i class="fas fa-dice-d20 mr-2"></i>Begin Adventure
+            <div id="start-button-container" class="mt-auto pt-4 mb-4 start-button-sticky-container">
+                <button id="start-button" class="w-full fantasy-button text-white font-bold py-3 px-6 rounded-md magic-glow text-xl fixed-visible font-medieval">
+                    <i class="fas fa-dice-d20 mr-2" title="Roll the dice of fate!"></i>Begin Adventure
                 </button>
             </div>
         </div>
 
-        <div class="lg:w-1/2 flex items-center justify-center fantasy-panel p-4 rounded-lg shadow-md fantasy-border min-h-[300px] ornamental-corners">
-            <span></span> <!-- Required empty span for ornamental corners -->
-            <div id="image-container" class="w-full h-full flex items-center justify-center">
-                <div id="image-placeholder" class="text-center text-gray-500 dark:text-gray-400">
-                    <i class="fas fa-image fa-3x mb-2 floating"></i>
-                    <p>Scene visuals will appear here.</p>
+        <div class="lg:w-1/2 flex flex-col space-y-4"> <div class="fantasy-panel p-4 rounded-lg shadow-md fantasy-border ornamental-corners flex-grow overflow-hidden"> <!-- Added flex-grow, overflow-hidden -->
+                <span></span>
+                <div id="image-container" class="w-full h-full flex items-center justify-center"> <!-- Added h-full back -->
+                    <div id="image-placeholder" class="text-center text-gray-500 dark:text-gray-400 p-10"> 
+                        <i class="fas fa-image fa-4x mb-3 floating"></i>
+                        <p class="text-lg">Scene visuals will appear here.</p>
+                    </div>
+                    <img id="scene-image" src="" alt="Scene Visual" class="hidden w-full max-h-full object-cover rounded-md shadow-lg animate-breathing"> <!-- Removed max-w-full, added w-full -->
                 </div>
-                <img id="scene-image" src="" alt="Scene Visual" class="hidden max-w-full max-h-full object-contain rounded-md">
+            </div>
+
+            <div id="end-adventure-container" class="hidden flex justify-end pt-2 flex-shrink-0"> <button id="end-adventure-button" class="end-adventure-button-style"> <!-- Added flex-shrink-0 to container -->
+                    <i class="fas fa-times-circle mr-2"></i>End Adventure
+                </button>
             </div>
         </div>
     </main>
@@ -154,13 +183,12 @@
                 <div></div><div></div><div></div>
                 <div></div><div></div><div></div>
             </div>
-            <p class="text-xl font-semibold animate-pulse-custom">Weaving your tale with magic...</p>
+            <p class="text-xl font-semibold animate-pulse-custom font-medieval">Weaving your tale with magic...</p>
         </div>
     </div>
 
     <input type="hidden" id="session-id" value="{{ session_id }}">
 
-    <!-- Load scripts -->
     <script src="/static/js/effects.js"></script>
     <script src="/static/js/script.js"></script>
 </body>

@@ -9,469 +9,298 @@
 }
 
 /* Enhanced borders and decorations */
-.scroll-border {
+.scroll-border { /* This class is on #story-output */
     position: relative;
-    padding: 20px;
+    /* Padding will be managed by #story-output.scroll-border directly */
 }
 
-.scroll-border::before,
-.scroll-border::after {
+/* Specific enhancements for #story-output to look more like a scroll */
+#story-output.scroll-border {
+    padding: 30px 25px; /* Increased padding for scroll effect content */
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.3),
+                inset 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 3px 3px 8px 8px; /* Slightly rounded bottom for a hanging scroll */
+    /* The .parchment-bg class will handle the main background */
+}
+
+#story-output.scroll-border::before,
+#story-output.scroll-border::after {
     content: '';
     position: absolute;
-    width: 100%;
-    height: 30px;
+    width: 102%; /* Slightly wider than the content for overlap */
+    left: -1%;   /* Center the wider element */
+    height: 45px; /* Increased height for a more visible roll */
     background-repeat: no-repeat;
     background-size: 100% 100%;
-    left: 0;
-    z-index: 1;
+    z-index: 2; /* Above content's default, below popups */
+    filter: drop-shadow(0 3px 3px rgba(0,0,0,0.25)); /* Shadow for the roll itself */
 }
 
-.scroll-border::before {
+#story-output.scroll-border::before { /* Top roll */
+    top: -20px; /* Position to overlap the top edge */
+    /* Example SVG for a scroll top - you might need to refine this or use a simpler gradient */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 45' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='scrollGradTop' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23c0a060;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23ab854f;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0,35 Q10,15 20,25 Q30,5 50,20 Q70,5 80,25 Q90,15 100,35 L100,15 Q90,40 80,10 Q70,35 50,5 Q30,35 20,10 Q10,40 0,15 Z' fill='url(%23scrollGradTop)'/%3E%3Cpath d='M0,33 Q10,13 20,23 Q30,3 50,18 Q70,3 80,23 Q90,13 100,33 L100,17 Q90,38 80,12 Q70,33 50,7 Q30,33 20,12 Q10,38 0,17 Z' fill='%23c0a060' opacity='0.7'/%3E%3C/svg%3E");
+    /* Fallback solid color if SVG is too complex or doesn't render */
+    /* background-color: #c0a060; */
+    border-bottom: 1px solid rgba(0,0,0,0.05); /* Very subtle line */
+}
+
+#story-output.scroll-border::after { /* Bottom roll */
+    bottom: -20px; /* Position to overlap the bottom edge */
+    /* Example SVG for a scroll bottom */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 45' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='scrollGradBottom' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23ab854f;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23c0a060;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0,10 Q10,30 20,20 Q30,40 50,25 Q70,40 80,20 Q90,30 100,10 L100,30 Q90,5 80,35 Q70,10 50,40 Q30,10 20,35 Q10,5 0,30 Z' fill='url(%23scrollGradBottom)'/%3E%3Cpath d='M0,12 Q10,32 20,22 Q30,42 50,27 Q70,42 80,22 Q90,32 100,12 L100,28 Q90,7 80,33 Q70,12 50,38 Q30,12 20,33 Q10,7 0,28 Z' fill='%23ab854f' opacity='0.7'/%3E%3C/svg%3E");
+    /* Fallback solid color */
+    /* background-color: #ab854f; */
+    border-top: 1px solid rgba(0,0,0,0.05); /* Very subtle line */
+}
+
+
+/* Original .scroll-border definitions for other elements (if any) */
+/* This ensures that if .scroll-border is used elsewhere, it gets its simpler original style */
+.scroll-border:not(#story-output)::before {
     top: -10px;
+    height: 30px; /* Original height */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'%3E%3Cpath d='M0,10 C30,0 70,0 100,10 L100,0 L0,0 Z' fill='%238a5fff' opacity='0.3'/%3E%3C/svg%3E");
+    filter: none; /* Remove filter for original simple version */
 }
 
-.scroll-border::after {
+.scroll-border:not(#story-output)::after {
     bottom: -10px;
+    height: 30px; /* Original height */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'%3E%3Cpath d='M0,0 C30,10 70,10 100,0 L100,10 L0,10 Z' fill='%238a5fff' opacity='0.3'/%3E%3C/svg%3E");
+    filter: none; /* Remove filter for original simple version */
 }
+
 
 /* Ornamental corners */
-.ornamental-corners {
-    position: relative;
+.ornamental-corners { position: relative; }
+.ornamental-corners::before, .ornamental-corners::after,
+.ornamental-corners > span::before, .ornamental-corners > span::after {
+    content: ''; position: absolute; width: 20px; height: 20px;
+    background-repeat: no-repeat; background-size: contain; z-index: 1;
 }
+.ornamental-corners::before { top: -5px; left: -5px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M20,0 L0,0 L0,20 C5,15 15,5 20,0 Z' fill='%238a5fff' opacity='0.5'/%3E%3C/svg%3E"); }
+.ornamental-corners::after { top: -5px; right: -5px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M0,0 L20,0 L20,20 C15,15 5,5 0,0 Z' fill='%238a5fff' opacity='0.5'/%3E%3C/svg%3E"); }
+.ornamental-corners > span::before { bottom: -5px; left: -5px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M0,0 L0,20 L20,20 C15,15 5,5 0,0 Z' fill='%238a5fff' opacity='0.5'/%3E%3C/svg%3E"); }
+.ornamental-corners > span::after { bottom: -5px; right: -5px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M20,0 L20,20 L0,20 C5,15 15,5 20,0 Z' fill='%238a5fff' opacity='0.5'/%3E%3C/svg%3E"); }
 
-.ornamental-corners::before,
-.ornamental-corners::after,
-.ornamental-corners > span::before,
-.ornamental-corners > span::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background-repeat: no-repeat;
-    background-size: contain;
-    z-index: 1;
-}
-
-.ornamental-corners::before {
-    top: -5px;
-    left: -5px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M20,0 L0,0 L0,20 C5,15 15,5 20,0 Z' fill='%238a5fff' opacity='0.5'/%3E%3C/svg%3E");
-}
-
-.ornamental-corners::after {
-    top: -5px;
-    right: -5px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M0,0 L20,0 L20,20 C15,15 5,5 0,0 Z' fill='%238a5fff' opacity='0.5'/%3E%3C/svg%3E");
-}
-
-.ornamental-corners > span::before {
-    bottom: -5px;
-    left: -5px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M0,0 L0,20 L20,20 C15,15 5,5 0,0 Z' fill='%238a5fff' opacity='0.5'/%3E%3C/svg%3E");
-}
-
-.ornamental-corners > span::after {
-    bottom: -5px;
-    right: -5px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M20,0 L20,20 L0,20 C5,15 15,5 20,0 Z' fill='%238a5fff' opacity='0.5'/%3E%3C/svg%3E");
-}
-
-/* Enhanced buttons */
-.fantasy-button {
-    position: relative;
-    overflow: hidden;
-}
-
-.fantasy-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.7s;
-}
-
-.fantasy-button:hover::before {
-    left: 100%;
-}
+/* General fantasy button (used for Start Adventure) - sheen effect */
+.fantasy-button { position: relative; overflow: hidden; }
+.fantasy-button::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent); transition: left 0.7s ease-in-out; }
+.fantasy-button:hover::before { left: 100%; }
 
 /* Magical glow effects */
-.magic-glow {
-    position: relative;
-}
+.magic-glow { position: relative; }
+.magic-glow::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: inherit; box-shadow: 0 0 15px 5px rgba(138, 95, 255, 0.5); opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+.magic-glow:hover::after { opacity: 1; }
 
-.magic-glow::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: inherit;
-    box-shadow: 0 0 15px 5px rgba(138, 95, 255, 0.5);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
+/* Animated background patterns for body */
+.bg-pattern { position: relative; overflow: hidden; }
+.bg-pattern::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238a5fff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); z-index: -2; }
+.bg-pattern::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 50% 50%, rgba(138, 95, 255, 0.1), transparent 70%); animation: pulse-bg 10s infinite alternate; z-index: -1; }
+@keyframes pulse-bg { 0% { opacity: 0.3; } 100% { opacity: 0.7; } }
 
-.magic-glow:hover::after {
-    opacity: 1;
-}
-
-/* Animated background patterns */
-.bg-pattern {
-    position: relative;
-    overflow: hidden;
-}
-
-.bg-pattern::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238a5fff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    z-index: -1;
-}
-
-/* Animated choice buttons */
-.choice-button-enter {
-    opacity: 0;
-    transform: translateY(20px);
-}
-
-.choice-button-enter-active {
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 300ms, transform 300ms;
-}
-
-.choice-button-exit {
-    opacity: 1;
-}
-
-.choice-button-exit-active {
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: opacity 300ms, transform 300ms;
-}
+/* === Start: Choice Button Enhancements === */
+#choices-container { max-height: 35vh; overflow-y: auto; padding-top: 0.5rem; }
+.choice-button { background-image: linear-gradient(to right, #3a2d5c, #4f3a7d, #3a2d5c); color: #d1c4e9; border: 1px solid #7e57c2; border-radius: 6px; padding: 0.9rem 1.25rem; width: 100%; text-align: left; font-family: 'Inter', sans-serif; font-size: 0.95rem; cursor: pointer; transition: background-image 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, color 0.3s ease, border-color 0.3s ease; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); display: flex; align-items: center; margin-bottom: 0.75rem; opacity: 0; animation: fadeInChoice 0.5s ease-out forwards; }
+@keyframes fadeInChoice { to { opacity: 1; } }
+.choice-button:hover { background-image: linear-gradient(to right, #8c3a3a, #a84343, #8c3a3a); color: #f5e0e0; border-color: #c76666; transform: translateY(-2px) scale(1.01); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 10px rgba(200, 50, 50, 0.3); }
+.choice-button:focus { outline: none; box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.4), 0 0 10px rgba(138, 95, 255, 0.3), 0 4px 8px rgba(0, 0, 0, 0.3); color: #ffffff; }
+.choice-button:active { transform: translateY(0px) scale(1); background-image: linear-gradient(to right, #6d2b2b, #833333, #6d2b2b); border-color: #a35252; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 0 5px rgba(0,0,0,0.2); color: #f0d8d8; }
+.choice-prefix { margin-right: 12px; font-weight: 700; color: #b39ddb; font-size: 1rem; flex-shrink: 0; }
+.choice-text { flex-grow: 1; line-height: 1.4; }
+/* === End: Choice Button Enhancements === */
 
 /* Parchment texture for story output */
-.parchment-bg {
-    background-color: rgba(255, 252, 235, 0.05);
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+.parchment-bg { /* Base for #story-output */
+    /* background-color: rgba(255, 252, 235, 0.05); */ /* Default, overridden below */
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23402e1a' fill-opacity='0.08' fill-rule='evenodd'/%3E%3C/svg%3E"); /* Darker specks for texture */
 }
+
+/* Applied to #story-output which also has .parchment-bg */
+#story-output.parchment-bg {
+    background-color: #f3eadd; /* A more typical parchment paper color for light mode */
+}
+
+.dark #story-output.parchment-bg {
+    background-color: #4a3b2a; /* A darker, aged parchment for dark mode */
+    /* Texture SVG fill color might need to change for dark mode if it clashes */
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23e0c8a0' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+/* === Start: Enhanced Story Readability === */
+#story-output {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+}
+
+#story-output p {
+    line-height: 1.75;
+    margin-bottom: 1.25rem;
+    color: #4a3b2a; /* Dark brown text for light parchment */
+    transition: color 0.3s ease;
+}
+
+#story-output p:last-child {
+    margin-bottom: 0;
+}
+
+.dark #story-output p {
+    color: #e0c8a0; /* Lighter, warm text for dark parchment */
+}
+/* === End: Enhanced Story Readability === */
 
 /* Animated loading spinner */
-.magic-spinner {
-    display: inline-block;
-    position: relative;
-    width: 80px;
-    height: 80px;
-}
+.magic-spinner { display: inline-block; position: relative; width: 80px; height: 80px; }
+.magic-spinner div { position: absolute; width: 16px; height: 16px; border-radius: 50%; background: #8a5fff; animation: magic-spinner 1.2s linear infinite; }
+/* ... (rest of magic-spinner child styles remain the same) ... */
+.magic-spinner div:nth-child(1) { top: 8px; left: 8px; animation-delay: 0s; }
+.magic-spinner div:nth-child(2) { top: 8px; left: 32px; animation-delay: -0.4s; }
+.magic-spinner div:nth-child(3) { top: 8px; left: 56px; animation-delay: -0.8s; }
+.magic-spinner div:nth-child(4) { top: 32px; left: 8px; animation-delay: -0.4s; }
+.magic-spinner div:nth-child(5) { top: 32px; left: 32px; animation-delay: -0.8s; }
+.magic-spinner div:nth-child(6) { top: 32px; left: 56px; animation-delay: -1.2s; }
+.magic-spinner div:nth-child(7) { top: 56px; left: 8px; animation-delay: -0.8s; }
+.magic-spinner div:nth-child(8) { top: 56px; left: 32px; animation-delay: -1.2s; }
+.magic-spinner div:nth-child(9) { top: 56px; left: 56px; animation-delay: -1.6s; }
+@keyframes magic-spinner { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.5); } }
 
-.magic-spinner div {
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #8a5fff;
-    animation: magic-spinner 1.2s linear infinite;
-}
-
-.magic-spinner div:nth-child(1) {
-    top: 8px;
-    left: 8px;
-    animation-delay: 0s;
-}
-
-.magic-spinner div:nth-child(2) {
-    top: 8px;
-    left: 32px;
-    animation-delay: -0.4s;
-}
-
-.magic-spinner div:nth-child(3) {
-    top: 8px;
-    left: 56px;
-    animation-delay: -0.8s;
-}
-
-.magic-spinner div:nth-child(4) {
-    top: 32px;
-    left: 8px;
-    animation-delay: -0.4s;
-}
-
-.magic-spinner div:nth-child(5) {
-    top: 32px;
-    left: 32px;
-    animation-delay: -0.8s;
-}
-
-.magic-spinner div:nth-child(6) {
-    top: 32px;
-    left: 56px;
-    animation-delay: -1.2s;
-}
-
-.magic-spinner div:nth-child(7) {
-    top: 56px;
-    left: 8px;
-    animation-delay: -0.8s;
-}
-
-.magic-spinner div:nth-child(8) {
-    top: 56px;
-    left: 32px;
-    animation-delay: -1.2s;
-}
-
-.magic-spinner div:nth-child(9) {
-    top: 56px;
-    left: 56px;
-    animation-delay: -1.6s;
-}
-
-@keyframes magic-spinner {
-    0%, 100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 0.5;
-        transform: scale(0.5);
-    }
-}
 
 /* Responsive design adjustments */
 @media (max-width: 768px) {
-    .scroll-border::before,
-    .scroll-border::after {
-        height: 20px;
+    #story-output.scroll-border::before,
+    #story-output.scroll-border::after {
+        height: 30px; /* Slightly smaller roll on mobile */
+        top: -15px;
     }
-    
-    .ornamental-corners::before,
-    .ornamental-corners::after,
-    .ornamental-corners > span::before,
-    .ornamental-corners > span::after {
-        width: 15px;
-        height: 15px;
+    #story-output.scroll-border::after {
+        bottom: -15px;
     }
+    .ornamental-corners::before, .ornamental-corners::after, .ornamental-corners > span::before, .ornamental-corners > span::after { width: 15px; height: 15px; }
+    #end-adventure-container { width: auto; position: fixed; bottom: 1rem; right: 1rem; left: auto; } /* Renamed from #quit-game-container */
+    .start-button-sticky-container { bottom: 0.5rem; }
 }
 
-/* Dark mode specific styles */
-.dark .parchment-bg {
-    background-color: rgba(30, 30, 46, 0.7);
-}
+/* Dark mode specific styles (parchment already handled) */
+/* .dark .parchment-bg is defined above with #story-output.parchment-bg */
 
 /* Typewriter cursor animation */
-@keyframes cursorBlink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-.typewriter-cursor {
-    display: inline-block;
-    width: 3px;
-    height: 1em;
-    background-color: currentColor;
-    margin-left: 2px;
-    animation: cursorBlink 1s step-end infinite;
-}
+@keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.typewriter-cursor { display: inline-block; width: 3px; height: 1em; background-color: currentColor; margin-left: 2px; animation: cursorBlink 1s step-end infinite; }
 
 /* Floating elements animation */
-.floating {
-    animation: floating 3s ease-in-out infinite;
-}
+.floating { animation: floating 3s ease-in-out infinite; }
+@keyframes floating { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
 
-@keyframes floating {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
-}
-
-/* Title styling without sparkle */
-.sparkle {
-    position: relative;
-    text-shadow: 0 0 10px rgba(138, 95, 255, 0.7);
-}
+/* Title styling */
+.sparkle { position: relative; text-shadow: 0 0 10px rgba(138, 95, 255, 0.7); }
 
 /* Fog effect for the background */
-.fog-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: -1;
-    pointer-events: none;
-}
-
-.fog {
-    position: absolute;
-    width: 200%;
-    height: 100vh;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ffffff' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23ffffff' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpattern id='b' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Ccircle fill='%23ffffff' cx='50' cy='50' r='50' opacity='0.05'/%3E%3C/pattern%3E%3Crect width='100%25' height='100%25' fill='url(%23a)'/%3E%3Crect width='100%25' height='100%25' fill='url(%23b)'/%3E%3C/svg%3E");
-    background-size: cover;
-    opacity: 0.5;
-}
-
-.fog-1 {
-    animation: fogAnimation 60s linear infinite;
-}
-
-.fog-2 {
-    animation: fogAnimation 45s linear infinite reverse;
-    opacity: 0.4;
-}
-
-.fog-3 {
-    animation: fogAnimation 30s linear infinite;
-    opacity: 0.3;
-}
-
-@keyframes fogAnimation {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-}
+.fog-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1; pointer-events: none; }
+.fog { position: absolute; width: 200%; height: 100vh; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ffffff' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23ffffff' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpattern id='b' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Ccircle fill='%23ffffff' cx='50' cy='50' r='50' opacity='0.05'/%3E%3C/pattern%3E%3Crect width='100%25' height='100%25' fill='url(%23a)'/%3E%3Crect width='100%25' height='100%25' fill='url(%23b)'/%3E%3C/svg%3E"); background-size: cover; opacity: 0.5; }
+.fog-1 { animation: fogAnimation 60s linear infinite; }
+.fog-2 { animation: fogAnimation 45s linear infinite reverse; opacity: 0.4; }
+.fog-3 { animation: fogAnimation 30s linear infinite; opacity: 0.3; }
+@keyframes fogAnimation { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
 /* Torch light effect */
-.torch-light {
-    position: relative;
-    overflow: hidden;
-}
-
-.torch-light::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 50% 50%, rgba(255, 200, 100, 0.2), transparent 60%);
-    animation: torchFlicker 5s infinite alternate;
-    mix-blend-mode: overlay;
-    pointer-events: none;
-}
-
-@keyframes torchFlicker {
-    0%, 100% { opacity: 0.5; }
-    25% { opacity: 0.4; }
-    50% { opacity: 0.6; }
-    75% { opacity: 0.5; }
-}
+.torch-light { position: relative; overflow: hidden; }
+.torch-light::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 50% 50%, rgba(255, 200, 100, 0.2), transparent 60%); animation: torchFlicker 5s infinite alternate; mix-blend-mode: overlay; pointer-events: none; }
+@keyframes torchFlicker { 0%, 100% { opacity: 0.5; } 25% { opacity: 0.4; } 50% { opacity: 0.6; } 75% { opacity: 0.5; } }
 
 /* Magical runes that appear on hover */
-.magical-runes {
-    position: relative;
-}
-
-.magical-runes::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M30,30 L70,30 M30,50 L70,50 M30,70 L70,70 M50,30 L50,70' stroke='%238a5fff' stroke-width='2' opacity='0.3'/%3E%3Ccircle cx='50' cy='50' r='40' stroke='%238a5fff' stroke-width='2' fill='none' opacity='0.3'/%3E%3C/svg%3E");
-    background-size: 100px 100px;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
-
-.magical-runes:hover::before {
-    opacity: 1;
-}
+.magical-runes { position: relative; }
+.magical-runes::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M30,30 L70,30 M30,50 L70,50 M30,70 L70,70 M50,30 L50,70' stroke='%238a5fff' stroke-width='2' opacity='0.3'/%3E%3Ccircle cx='50' cy='50' r='40' stroke='%238a5fff' stroke-width='2' fill='none' opacity='0.3'/%3E%3C/svg%3E"); background-size: 100px 100px; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
+.magical-runes:hover::before { opacity: 1; }
 
 /* Animated choice selection */
-.choice-selected {
-    animation: choiceSelected 0.5s forwards;
-}
-
+.choice-selected { animation: choiceSelected 0.5s forwards; }
 @keyframes choiceSelected {
     0% { transform: scale(1); box-shadow: 0 0 0 rgba(138, 95, 255, 0); }
-    50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(138, 95, 255, 0.5); }
-    100% { transform: scale(1); box-shadow: 0 0 10px rgba(138, 95, 255, 0.3); }
+    50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(200, 50, 50, 0.5); }
+    100% { transform: scale(1); box-shadow: 0 0 10px rgba(200, 50, 50, 0.3); }
 }
 
-/* Ensure the Begin Adventure button is always visible */
+/* Start Adventure Button (#start-button) specific animation styles */
 .fixed-visible {
-    position: relative;
-    z-index: 100;
-    transform: translateZ(0);
-    transition: all 0.3s ease;
-    animation: pulse-attention 2s infinite;
-    display: block;
-    width: 100%;
+    position: relative; z-index: 10; transform: translateZ(0);
+    display: block; width: 100%;
     box-shadow: 0 0 15px rgba(138, 95, 255, 0.8);
-    background-image: linear-gradient(to right, #4c2882, #6a359c, #8a5fff, #6a359c, #4c2882);
     background-size: 200% auto;
     animation: pulse-attention 2s infinite, gradient-shift 3s ease infinite;
-    margin-bottom: 20px; /* Add margin to ensure it doesn't overlap with other elements */
+}
+@keyframes pulse-attention { 0%, 100% { box-shadow: 0 0 15px rgba(138, 95, 255, 0.8); } 50% { box-shadow: 0 0 25px rgba(138, 95, 255, 1); } }
+@keyframes gradient-shift { 0% { background-position: 0% center; } 50% { background-position: 100% center; } 100% { background-position: 0% center; } }
+
+/* Sticky container for the #start-button's wrapper div */
+.start-button-sticky-container {
+    position: -webkit-sticky; position: sticky;
+    bottom: 1rem; z-index: 50;
+    background-color: var(--sticky-bg, rgba(17, 24, 39, 0.95));
+    padding-top: 0.5rem; padding-bottom: 0.5rem;
+    transition: background-color 0.3s ease;
 }
 
-@keyframes pulse-attention {
-    0%, 100% { box-shadow: 0 0 15px rgba(138, 95, 255, 0.8); }
-    50% { box-shadow: 0 0 25px rgba(138, 95, 255, 1); }
-}
-
-@keyframes gradient-shift {
-    0% { background-position: 0% center; }
-    50% { background-position: 100% center; }
-    100% { background-position: 0% center; }
-}
-
-/* Sticky container for the button */
-.sticky {
-    position: -webkit-sticky;
-    position: sticky;
-    bottom: 1rem;
-    z-index: 50;
-}
-
-/* Smooth transitions for all elements */
-* {
-    transition: all 0.3s ease;
-}
-
-/* Improved button hover effect */
-.fantasy-button:hover {
-    background-image: linear-gradient(to right, #6a359c, #8a5fff, #6a359c);
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2), 0 0 20px rgba(138, 95, 255, 0.6);
-    letter-spacing: 0.5px;
-}
-
-/* Enhanced background effects */
-.bg-pattern::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 50% 50%, rgba(138, 95, 255, 0.1), transparent 70%);
-    animation: pulse-bg 10s infinite alternate;
-    z-index: -1;
-}
-
-@keyframes pulse-bg {
-    0% { opacity: 0.3; }
-    100% { opacity: 0.7; }
-}
-
-/* Subtle text glow for headings */
-h1, h2, h3, label {
-    text-shadow: 0 0 5px rgba(138, 95, 255, 0.3);
+/* Subtle text glow for general headings */
+h1.glow-effect, h2.glow-effect, h3.glow-effect, label.glow-effect {
+    text-shadow: 0 0 8px rgba(138, 95, 255, 0.5);
 }
 
 /* Smooth scrolling */
-html {
-    scroll-behavior: smooth;
+html { scroll-behavior: smooth; }
+
+/* Styling for contenteditable story output */
+#story-output[contenteditable="true"] {
+    cursor: text;
+    border-color: #a78bfa; /* Purple border to indicate editable */
+    box-shadow: 0 0 10px rgba(167, 139, 250, 0.5); /* Purple glow */
 }
+
+#story-output[contenteditable="true"]:focus {
+    outline: 2px solid #8b5cf6; /* Stronger purple outline on focus */
+    box-shadow: 0 0 15px rgba(139, 93, 246, 0.7);
+}
+
+/* Placeholder styling for contenteditable div */
+#story-output[contenteditable="true"][data-placeholder]:empty:before {
+    content: attr(data-placeholder);
+    color: #9ca3af; /* Tailwind gray-400 */
+    font-style: italic;
+    pointer-events: none; /* Important to allow clicks to focus the div */
+}
+
+.dark #story-output[contenteditable="true"][data-placeholder]:empty:before {
+    color: #6b7280; /* Tailwind gray-500 for dark mode */
+}
+
+
+/* === Start: End Adventure Button Styling === */ /* Renamed from Quit Game */
+#end-adventure-container { /* Renamed from #quit-game-container */
+    width: 100%;
+}
+.end-adventure-button-style { /* Renamed from .quit-button */
+    background-image: linear-gradient(to right, #782020, #9c2a2a, #782020);
+    color: #f5e0e0; border: 1px solid #c75050; border-radius: 6px;
+    padding: 0.75rem 1.5rem; font-family: 'MedievalSharp', cursive; font-size: 1.1rem;
+    cursor: pointer; transition: background-image 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); text-align: center;
+    width: 100%; display: inline-block;
+}
+.end-adventure-button-style:hover { background-image: linear-gradient(to right, #9c2a2a, #b83232, #9c2a2a); color: #ffffff; transform: translateY(-2px); box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3), 0 0 15px rgba(200, 50, 50, 0.4); }
+.end-adventure-button-style:active { background-image: linear-gradient(to right, #601818, #782020, #601818); transform: translateY(0px); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
+.end-adventure-button-style:focus { outline: none; box-shadow: 0 0 0 3px rgba(176, 50, 50, 0.6), 0 0 10px rgba(200, 50, 50, 0.4); }
+/* === End: End Adventure Button Styling === */
+
+/* === Start: Image Breathing Animation === */
+@keyframes breathing {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); } /* Slightly zoom in */
+    100% { transform: scale(1); }
+}
+
+.animate-breathing {
+    animation: breathing 8s ease-in-out infinite; /* Adjust duration and timing as needed */
+    will-change: transform; /* Hint for performance */
+    /* Removed animation-play-state: paused; */
+}
+/* === End: Image Breathing Animation === */
