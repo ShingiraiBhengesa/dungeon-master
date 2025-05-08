@@ -120,6 +120,7 @@ function updateSceneImage(imageUrl) {
             <p>Scene visuals will appear here.</p>
         </div>`;
      imagePlaceholder.innerHTML = defaultPlaceholder;
+     // Removed animation control logic from here
 
     if (imageUrl) {
         sceneImage.src = imageUrl;

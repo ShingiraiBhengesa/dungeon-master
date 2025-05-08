@@ -290,3 +290,17 @@ html { scroll-behavior: smooth; }
 .end-adventure-button-style:active { background-image: linear-gradient(to right, #601818, #782020, #601818); transform: translateY(0px); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
 .end-adventure-button-style:focus { outline: none; box-shadow: 0 0 0 3px rgba(176, 50, 50, 0.6), 0 0 10px rgba(200, 50, 50, 0.4); }
 /* === End: End Adventure Button Styling === */
+
+/* === Start: Image Breathing Animation === */
+@keyframes breathing {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); } /* Slightly zoom in */
+    100% { transform: scale(1); }
+}
+
+.animate-breathing {
+    animation: breathing 8s ease-in-out infinite; /* Adjust duration and timing as needed */
+    will-change: transform; /* Hint for performance */
+    /* Removed animation-play-state: paused; */
+}
+/* === End: Image Breathing Animation === */
