@@ -247,7 +247,12 @@ h1.glow-effect, h2.glow-effect, h3.glow-effect, label.glow-effect {
 }
 
 /* Smooth scrolling */
-html { scroll-behavior: smooth; }
+html { 
+    scroll-behavior: smooth; 
+}
+body {
+    position: relative;
+}
 
 /* Styling for contenteditable story output */
 #story-output[contenteditable="true"] {

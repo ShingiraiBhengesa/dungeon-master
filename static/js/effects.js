@@ -188,7 +188,8 @@ function initializeTypewriter() {
 function initializeParticles() {
     // Create floating particles in the background
     const createParticles = () => {
-        const body = document.querySelector('body');
+        const fogContainer = document.querySelector('.fog-container');
+        if (!fogContainer) return;
         const particleCount = 50;
         
         for (let i = 0; i < particleCount; i++) {
@@ -205,16 +206,17 @@ function initializeParticles() {
             particle.style.left = `${Math.random() * 100}%`;
             particle.style.top = `${Math.random() * 100}%`;
             
-            // Random animation
+            // Random animation duration and delay
             const duration = 30 + Math.random() * 60;
             const delay = Math.random() * 10;
             
+            // Use fixed translate and rotate values in keyframes, variation via delay and duration
             particle.style.animation = `floatParticle ${duration}s linear ${delay}s infinite`;
             
-            body.appendChild(particle);
+            fogContainer.appendChild(particle);
         }
         
-        // Add keyframe animation to stylesheet
+        // Add keyframe animation to stylesheet if not already added
         if (!document.querySelector('#particle-style')) {
             const style = document.createElement('style');
             style.id = 'particle-style';
@@ -231,7 +233,7 @@ function initializeParticles() {
                         opacity: 0.8;
                     }
                     100% {
-                        transform: translate(${Math.random() > 0.5 ? '+' : '-'}${20 + Math.random() * 30}px, ${Math.random() > 0.5 ? '+' : '-'}${20 + Math.random() * 30}px) rotate(${Math.random() * 360}deg);
+                        transform: translate(25px, -25px) rotate(360deg);
                         opacity: 0;
                     }
                 }
