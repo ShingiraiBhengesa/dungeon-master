@@ -156,16 +156,34 @@ function updateSceneImage(imageUrl) {
  */
 function updateAudioPlayer(audioUrl) {
     const audioPlayerContainer = document.getElementById('audio-player-container');
-    const audioPlayer = document.getElementById('audio-player');
+    const audioPlayer = document.getElementById('audio-player'); // This is the <audio> element
     if (!audioPlayerContainer || !audioPlayer) return;
     if (audioUrl) {
         audioPlayer.src = audioUrl;
         audioPlayerContainer.classList.remove('hidden');
         audioPlayerContainer.classList.add('fade-in');
         audioPlayer.load();
+        // Attempt to play the audio
+        const playPromise = audioPlayer.play();
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+                // Autoplay started!
+                console.log("Audio playback started automatically.");
+            }).catch(error => {
+                // Autoplay was prevented.
+                console.warn("Audio autoplay was prevented:", error);
+                // Optionally, you could show a "click to play" button here
+                // or notify the user that they might need to enable audio.
+            });
+        }
     } else {
         audioPlayerContainer.classList.add('hidden');
         audioPlayer.removeAttribute('src');
+        // If there's an existing audio playing, stop it
+        if (audioPlayer && !audioPlayer.paused) {
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+        }
     }
 }
 
