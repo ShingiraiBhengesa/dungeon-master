@@ -7,7 +7,7 @@ AI DungeonMaster is an immersive, web-based choose-your-own-adventure game where
 ## Features
 
 * **Web Interface:** Playable in a web browser with a dark mode theme.
-* **Real-time Story Generation:** Uses OpenAI's LLM (`gpt-4o-mini` by default) via a Flask backend.
+* **Real-time Story Generation:** Uses OpenAI's LLM (`gpt-4.1-mini` by default) via a Flask backend.
 * **AI-Generated Scene Art:** Uses OpenAI's DALL-E 3 to generate illustrations displayed directly in the browser.
 * **AI-Generated Narration:** Uses OpenAI's TTS (`tts-1` by default) with an integrated HTML5 audio player.
 * **Interactive Choices:** Clickable buttons for story progression.
